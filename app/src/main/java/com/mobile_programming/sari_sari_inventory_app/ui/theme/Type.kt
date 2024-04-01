@@ -1,4 +1,4 @@
-package com.mobileprogramming.sarisariinventoryapp.ui.theme
+package com.mobile_programming.sari_sari_inventory_app.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

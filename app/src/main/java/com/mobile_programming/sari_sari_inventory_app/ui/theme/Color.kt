@@ -1,4 +1,4 @@
-package com.mobileprogramming.sarisariinventoryapp.ui.theme
+package com.mobile_programming.sari_sari_inventory_app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
