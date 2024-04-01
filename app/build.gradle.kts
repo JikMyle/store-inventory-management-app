@@ -1,14 +1,16 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 android {
-    namespace = "com.mobileprogramming.sarisariinventoryapp"
+    namespace = "com.mobile_programming.sari_sari_inventory_app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.mobileprogramming.sarisariinventoryapp"
+        applicationId = "com.mobile_programming.sari_sari_inventory_app"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
@@ -40,18 +42,23 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
+    implementation(libs.appcompat)
+
+    // Compose Dependencies
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -60,7 +67,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    testImplementation(libs.core.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit.ktx)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,4 +78,20 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // Compose Dependencies END
+
+    // Jetpack Rooms Dependencies
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    implementation(libs.androidx.room.paging)
+    // Jetpack Room Dependencies END
+
+    // Coroutines Dependencies
+    implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    // Coroutines Dependencies END
 }

@@ -2,7 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="ProductTableTest">
+        <State />
+      </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="productTable_InsertProduct_ProductInserted()">
+        <State />
+      </entry>
+      <entry key="productTable_NonExistingNameAndProduct_EmptyListReturned()">
+        <State />
+      </entry>
+      <entry key="productTable_SearchByProductNameAndNumber_ProductListFiltered()">
         <State />
       </entry>
     </value>
