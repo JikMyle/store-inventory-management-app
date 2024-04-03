@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"
@@ -65,6 +66,10 @@ dependencies {
     // I'll probably remove some of these when we use Views
     // Compose Dependencies
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
 
@@ -84,7 +89,6 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    // Compose Dependencies END
 
     // Jetpack Rooms Dependencies
     implementation(libs.androidx.room.runtime)
@@ -93,11 +97,16 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.androidx.room.paging)
-    // Jetpack Room Dependencies END
 
     // Coroutines Dependencies
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)
-    // Coroutines Dependencies END
+
+    // CameraX Dependencies
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+
+    // ML Kit Barcode Scanner API
+    implementation(libs.play.services.mlkit.barcode.scanning)
 }

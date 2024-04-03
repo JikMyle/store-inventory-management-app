@@ -6,11 +6,16 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mobile_programming.sari_sari_inventory_app.InventoryApplication
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductEntryViewModel
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarCodeScannerViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             ProductEntryViewModel(inventoryApplication().container.inventoryRepository)
+        }
+
+        initializer {
+            BarCodeScannerViewModel(inventoryApplication().container.inventoryRepository)
         }
     }
 }

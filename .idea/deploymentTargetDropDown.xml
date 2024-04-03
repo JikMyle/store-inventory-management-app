@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="MainActivity">
+        <State />
+      </entry>
       <entry key="ProductTableTest">
         <State />
       </entry>
@@ -9,9 +12,6 @@
         <State />
       </entry>
       <entry key="productTable_InsertProduct_ProductInserted()">
-        <State />
-      </entry>
-      <entry key="productTable_NonExistingNameAndProduct_EmptyListReturned()">
         <State />
       </entry>
       <entry key="productTable_SearchByProductNameAndNumber_ProductListFiltered()">
