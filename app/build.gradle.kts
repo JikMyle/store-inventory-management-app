@@ -106,6 +106,8 @@ dependencies {
     // CameraX Dependencies
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.mlkit.vision)
 
     // ML Kit Barcode Scanner API
     implementation(libs.play.services.mlkit.barcode.scanning)

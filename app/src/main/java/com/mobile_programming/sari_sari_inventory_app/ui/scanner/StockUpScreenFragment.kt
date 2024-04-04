@@ -12,9 +12,9 @@ import com.mobile_programming.sari_sari_inventory_app.databinding.FragmentBarcod
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
 import com.mobile_programming.sari_sari_inventory_app.ui.theme.SariSariInventoryAppTheme
 
-class BarcodeScannerFragment : Fragment() {
+class StockUpScreenFragment : Fragment() {
     private lateinit var binding: FragmentBarcodeScannerBinding
-    private lateinit var viewModel: BarCodeScannerViewModel
+    private lateinit var viewModel: StockUpViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,11 +32,13 @@ class BarcodeScannerFragment : Fragment() {
         val factory = AppViewModelProvider.Factory
         val viewModelProvider = ViewModelProvider(requireActivity(), factory)
 
-        viewModel = viewModelProvider[BarCodeScannerViewModel::class.java]
+        viewModel = viewModelProvider[StockUpViewModel::class.java]
 
         binding.barcodeScannerComposeView.setContent {
             SariSariInventoryAppTheme {
-                BarcodeScannerScreen(viewModel = viewModel)
+                StockUpScannerScreen(
+                    viewModel = viewModel,
+                )
             }
         }
 
