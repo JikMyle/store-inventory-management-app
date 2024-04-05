@@ -15,18 +15,19 @@ class StockUpViewModel(
     override fun onPermissionResult(isGranted: Boolean) {
         _uiState.value = _uiState.value.copy(hasCameraAccess = isGranted)
     }
-
-    override fun onScanSuccess(productNumber: String) {
+    override fun onBarcodeScanned(productNumber: String) {
         if(productNumber.isNotBlank()) {
-            Log.d("TEST", productNumber)
+            Log.d("BarcodeAnalyzer", productNumber)
+            _uiState.value = _uiState.value.copy(hasFoundBarcode = true)
         } else {
-            Log.d("TEST", "NO CODE SCANNED")
+            _uiState.value = _uiState.value.copy(hasFoundBarcode = false)
         }
     }
 
 }
 
 data class StockUpUiState(
-    val hasCameraAccess: Boolean = false,
+    val hasCameraAccess: Boolean = true,
     val isCameraBack: Boolean = true,
+    val hasFoundBarcode: Boolean = false
 )

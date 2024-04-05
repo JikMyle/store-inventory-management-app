@@ -13,19 +13,25 @@ import com.google.mlkit.vision.common.InputImage
 
 
 class BarcodeAnalyzer(
-    private val onScanSuccess: (List<Barcode>) -> Unit,
+    private val overlay: ScannerOverlay,
+    private val onBarcodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
-    private val tag = "BarcodeScanning"
 
+    private val debugTag = "BarcodeAnalyzer"
     private val options = BarcodeScannerOptions.Builder()
-        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+
+        .setBarcodeFormats(
+            Barcode.FORMAT_CODE_128, Barcode.FORMAT_CODE_93, Barcode.FORMAT_CODE_39,
+            Barcode.FORMAT_EAN_8, Barcode.FORMAT_EAN_13,
+            Barcode.FORMAT_UPC_E, Barcode.FORMAT_UPC_A,
+            Barcode.FORMAT_ITF, Barcode.FORMAT_CODABAR
+        )
         .build()
     private val barcodeScanner: BarcodeScanner = BarcodeScanning.getClient(options)
 
     @OptIn(ExperimentalGetImage::class)
     override fun analyze(image: ImageProxy) {
         val mediaImage = image.image
-
         if(mediaImage == null) {
             image.close()
             return
@@ -35,17 +41,70 @@ class BarcodeAnalyzer(
 
         barcodeScanner.process(inputImage)
             .addOnSuccessListener { barcodes ->
-                if(barcodes.isNotEmpty()) {
-                    onScanSuccess(barcodes)
+                if(barcodes.isNotEmpty()
+                    && isInBoundingBox(
+                        barcodes.first(),
+                        inputImage.width,
+                        inputImage.height,
+                        inputImage.rotationDegrees
+                    )
+                ) {
+                    onBarcodeScanned(barcodes.first().rawValue ?: "")
                 } else {
-                    Log.d(tag, "$tag: No barcode found.")
+                    onBarcodeScanned("")
+                    Log.d(debugTag, "$debugTag: No barcode found.")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d(tag, "$tag: Something went wrong $exception")
+                Log.d(debugTag, "$debugTag: Something went wrong $exception")
             }
             .addOnCompleteListener {
                 image.close()
             }
     }
+
+    private fun isInBoundingBox(
+        barcode: Barcode,
+        imageWidth: Int,
+        imageHeight: Int,
+        imageRotation: Int,
+    ) : Boolean {
+
+        val scaleFactor =
+            if(imageRotation == 90 || imageRotation == 270) {
+                maxOf(
+                    overlay.viewHeight / imageWidth,
+                    overlay.viewWidth / imageHeight
+                )
+            } else {
+                maxOf(
+                    overlay.viewWidth / imageWidth,
+                    overlay.viewHeight / imageHeight
+                )
+            }
+
+        val barcodeCorners = barcode.cornerPoints
+
+        if(barcodeCorners.isNullOrEmpty()) {
+            return false
+        }
+
+        val isInside =
+            with(barcodeCorners) {
+                if (imageRotation == 90 || imageRotation == 270) {
+                    get(0).x >= overlay.rect.left / scaleFactor
+                            && get(0).y >= overlay.rect.top / scaleFactor
+                            && get(2).x <= overlay.rect.right / scaleFactor
+                            && get(2).y <= overlay.rect.bottom / scaleFactor
+                } else {
+                    get(0).x >= overlay.rect.left / scaleFactor
+                        && get(0).y >= overlay.rect.top / scaleFactor
+                        && get(2).x <= overlay.rect.right / scaleFactor
+                        && get(2).y <= overlay.rect.bottom / scaleFactor
+                }
+            }
+
+        return isInside
+    }
+
 }
