@@ -2,6 +2,7 @@ package com.mobile_programming.sari_sari_inventory_app.ui.scanner
 
 import android.Manifest
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Color
 import android.util.Size
@@ -17,35 +18,74 @@ import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.mobile_programming.sari_sari_inventory_app.R
+import com.mobile_programming.sari_sari_inventory_app.ui.LockScreenOrientation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import androidx.compose.ui.geometry.Size as geometrySize
 import androidx.compose.ui.graphics.Color as composeColor
 
 @Composable
 fun BarcodeScanner(
     modifier: Modifier = Modifier,
-    hasCameraAccess: Boolean,
-    isCameraFacingBack: Boolean,
+    cameraState: CameraState,
+    onSwitchCamera: () -> Unit,
     onPermissionResult: (Boolean) -> Unit,
+    onBarcodeScanned: (String) -> Unit,
+) {
+
+    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        onPermissionResult(isGranted)
+    }
+
+    LaunchedEffect(cameraState.isCameraFacingBack) {
+        cameraPermissionResultLauncher.launch(
+            Manifest.permission.CAMERA
+        )
+    }
+
+    LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
+    if (cameraState.hasCameraAccess) {
+        BarcodeScannerPreviewView(
+            isCameraFacingBack = cameraState.isCameraFacingBack,
+            onSwitchCamera = onSwitchCamera,
+            onBarcodeScanned = onBarcodeScanned
+        )
+    }
+}
+
+@Composable
+fun BarcodeScannerPreviewView(
+    modifier: Modifier = Modifier,
+    isCameraFacingBack: Boolean,
+    onSwitchCamera: () -> Unit,
     onBarcodeScanned: (String) -> Unit,
 ) {
     val lensFacing =
@@ -58,6 +98,7 @@ fun BarcodeScanner(
 
     val previewView = remember { PreviewView(context) }
 
+    var cameraProvider: ProcessCameraProvider? = null
     val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
     val screenWidth = configuration.screenWidthDp.dp
@@ -66,24 +107,15 @@ fun BarcodeScanner(
 
     val overlay =
         ScannerOverlay(
-            256 * screenDensity,
-            screenWidth.value * screenDensity,
-            screenHeight.value * screenDensity
+            size = 256 * screenDensity,
+            borderRadius = 56f,
+            viewWidth = screenWidth.value * screenDensity,
+            viewHeight = screenHeight.value * screenDensity
         )
     val imageResolution = Size(1280, 720)
 
-    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        onPermissionResult(isGranted)
-    }
-
-    LaunchedEffect(!hasCameraAccess) {
-        cameraPermissionResultLauncher.launch(
-            Manifest.permission.CAMERA
-        )
-
-        val cameraProvider = context.getCameraProvider()
+    LaunchedEffect(lensFacing) {
+        cameraProvider = context.getCameraProvider()
         val preview = Preview.Builder().build()
         val imageAnalysis = createImageAnalysis(
             context,
@@ -93,72 +125,69 @@ fun BarcodeScanner(
             onBarcodeScanned(it)
         }
 
-        cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageAnalysis)
+        cameraProvider?.unbindAll()
+        cameraProvider?.bindToLifecycle(
+            lifecycleOwner,
+            cameraxSelector,
+            preview,
+            imageAnalysis
+        )
+
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    if (hasCameraAccess) {
-        Box(modifier = modifier.fillMaxSize()) {
-            AndroidView(factory = {
-                previewView.apply {
-                    layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                    setBackgroundColor(Color.BLACK)
-                    scaleType = PreviewView.ScaleType.FILL_CENTER
-                }
-            })
-
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawPath(
-                    path = overlay.path,
-                    color = composeColor.White,
-                    style = Stroke(
-                        width = 10.dp.value,
-                        cap = StrokeCap.Round
-                    ),
-                )
-            }
+    DisposableEffect(cameraProvider) {
+        onDispose {
+            cameraProvider?.unbindAll()
         }
-    } else {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(composeColor.Black)
-        )
     }
-}
 
-class ScannerOverlay(
-    size: Float,
-    val viewWidth: Float,
-    val viewHeight: Float
-) {
-    private val boundingBoxCornerOffset = (size / 4)
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(factory = {
+            previewView.apply {
+                layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                setBackgroundColor(Color.BLACK)
+                scaleType = PreviewView.ScaleType.FILL_CENTER
+            }
+        })
 
-    private val canvasOffsetX = (viewWidth - size) / 2f
-    private val canvasOffsetY = (viewHeight - size) / 2f
 
-    val rect = Rect(
-        Offset(canvasOffsetX, canvasOffsetY),
-        geometrySize(size, size)
-    )
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawPath(
+                path = overlay.path,
+                color = composeColor.White,
+                style = Stroke(
+                    width = 3.dp.toPx(),
+                    cap = StrokeCap.Round
+                ),
+            )
+        }
 
-    val path = Path().apply {
-        moveTo(rect.topCenter.x - boundingBoxCornerOffset, rect.top)
-        lineTo(rect.left, rect.top)
-        lineTo(rect.left, rect.centerLeft.y - boundingBoxCornerOffset)
+        Text(
+            text = "SCAN BARCODE",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(
+                    y = -(overlay.size / Resources.getSystem().displayMetrics.density / 1.5).dp
+                )
+        )
 
-        moveTo(rect.left, rect.centerLeft.y + boundingBoxCornerOffset)
-        lineTo(rect.left, rect.bottom)
-        lineTo(rect.bottomCenter.x - boundingBoxCornerOffset, rect.bottom)
+        IconButton(
+            onClick = onSwitchCamera,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(dimensionResource(R.dimen.content_padding))
+        ) {
 
-        moveTo(rect.bottomCenter.x + boundingBoxCornerOffset, rect.bottom)
-        lineTo(rect.right, rect.bottom)
-        lineTo(rect.right, rect.centerRight.y + boundingBoxCornerOffset)
-
-        moveTo(rect.right, rect.centerRight.y - boundingBoxCornerOffset)
-        lineTo(rect.right, rect.top)
-        lineTo(rect.topCenter.x + boundingBoxCornerOffset, rect.top)
+            Icon(
+                painter = painterResource(R.drawable.round_flip_camera_android_24),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                contentDescription = null
+            )
+        }
     }
 }
 
