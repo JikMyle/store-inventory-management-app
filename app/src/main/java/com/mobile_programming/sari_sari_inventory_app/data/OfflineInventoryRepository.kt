@@ -27,15 +27,15 @@ class OfflineInventoryRepository(
         productDao.deleteProduct(product)
     }
 
-    override suspend fun getAllProducts(): Flow<List<Product>> {
+    override fun getAllProducts(): Flow<List<Product>> {
         return productDao.getAllProducts()
     }
 
-    override suspend fun getProduct(id: Long): Flow<Product> {
+    override fun getProduct(id: Long): Flow<Product> {
         return productDao.getProduct(id)
     }
 
-    override suspend fun getProduct(nameOrNumber: String): Flow<List<Product>> {
+    override fun getProduct(nameOrNumber: String): Flow<List<Product>> {
         return productDao.getProduct(nameOrNumber)
     }
 
@@ -53,11 +53,11 @@ class OfflineInventoryRepository(
         receiptDao.deleteReceipt(receipt)
     }
 
-    override suspend fun getAllReceipts(): Flow<List<Receipt>> {
+    override fun getAllReceipts(): Flow<List<Receipt>> {
         return receiptDao.getAllReceipts()
     }
 
-    override suspend fun getReceipt(id: Long): Flow<Receipt> {
+    override fun getReceipt(id: Long): Flow<Receipt> {
         return receiptDao.getReceipt(id)
     }
 
@@ -69,7 +69,7 @@ class OfflineInventoryRepository(
         )
     }
 
-    override suspend fun getReceiptTotalCost(id: Long): Double {
+    override fun getReceiptTotalCost(id: Long): Double {
         return receiptDao.getTotalCost(id)
     }
 
@@ -77,14 +77,14 @@ class OfflineInventoryRepository(
         id: Long?,
         dateFrom: Date,
         dateTo: Date
-    ): List<ProductSale> {
+    ): Flow<List<ProductSale>> {
         return productDao.getSalesFromDates(id, dateFrom, dateTo)
     }
 
     override suspend fun getRevenueFromDates(
         dateFrom: Date,
         dateTo: Date
-    ): List<RevenueOnDate> {
+    ): Flow<List<RevenueOnDate>> {
         return receiptDao.getRevenueFromDates(dateFrom, dateTo)
     }
 

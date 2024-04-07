@@ -17,7 +17,6 @@ class BarcodeAnalyzer(
     private val onBarcodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
 
-    private val debugTag = "BarcodeAnalyzer"
     private val options = BarcodeScannerOptions.Builder()
 
         .setBarcodeFormats(
@@ -49,14 +48,19 @@ class BarcodeAnalyzer(
                         inputImage.rotationDegrees
                     )
                 ) {
+                    Log.d(
+                        BarcodeAnalyzer::class.simpleName,
+                        "Scanned Barcode Number: ${barcodes.first().rawValue}"
+                    )
+
                     onBarcodeScanned(barcodes.first().rawValue ?: "")
-                } else {
-                    onBarcodeScanned("")
-                    Log.d(debugTag, "$debugTag: No barcode found.")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d(debugTag, "$debugTag: Something went wrong $exception")
+                Log.d(
+                    BarcodeAnalyzer::class.simpleName,
+                    "${BarcodeAnalyzer::class.simpleName}: Something went wrong $exception"
+                )
             }
             .addOnCompleteListener {
                 image.close()
@@ -83,25 +87,14 @@ class BarcodeAnalyzer(
                 )
             }
 
-        val barcodeCorners = barcode.cornerPoints
-
-        if(barcodeCorners.isNullOrEmpty()) {
-            return false
-        }
+        val barcodeCorners = barcode.cornerPoints ?: return false
 
         val isInside =
             with(barcodeCorners) {
-                if (imageRotation == 90 || imageRotation == 270) {
-                    get(0).x >= overlay.rect.left / scaleFactor
-                            && get(0).y >= overlay.rect.top / scaleFactor
-                            && get(2).x <= overlay.rect.right / scaleFactor
-                            && get(2).y <= overlay.rect.bottom / scaleFactor
-                } else {
-                    get(0).x >= overlay.rect.left / scaleFactor
-                        && get(0).y >= overlay.rect.top / scaleFactor
-                        && get(2).x <= overlay.rect.right / scaleFactor
-                        && get(2).y <= overlay.rect.bottom / scaleFactor
-                }
+                get(0).x >= overlay.rect.left / scaleFactor
+                    && get(0).y >= overlay.rect.top / scaleFactor
+                    && get(2).x <= overlay.rect.right / scaleFactor
+                    && get(2).y <= overlay.rect.bottom / scaleFactor
             }
 
         return isInside

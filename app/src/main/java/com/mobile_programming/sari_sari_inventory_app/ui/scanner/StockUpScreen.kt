@@ -16,7 +16,6 @@ fun StockUpScannerScreen(
     BarcodeScanner(
         hasCameraAccess = uiState.value.hasCameraAccess,
         isCameraFacingBack = uiState.value.isCameraBack,
-        hasFoundBarcode = uiState.value.hasFoundBarcode,
         onPermissionResult = viewModel::onPermissionResult,
         onBarcodeScanned = viewModel::onBarcodeScanned
     )

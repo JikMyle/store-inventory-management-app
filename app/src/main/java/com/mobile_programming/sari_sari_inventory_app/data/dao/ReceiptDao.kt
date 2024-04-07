@@ -52,5 +52,5 @@ interface ReceiptDao {
             "WHERE r.dateCreated >= :dateFrom " +
             "AND r.dateCreated < :dateTo " +
             "GROUP BY r.dateCreated")
-    fun getRevenueFromDates(dateFrom: Date, dateTo: Date) : List<RevenueOnDate>
+    fun getRevenueFromDates(dateFrom: Date, dateTo: Date) : Flow<List<RevenueOnDate>>
 }

@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.util.Log
+import android.util.Size
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -12,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -43,7 +45,6 @@ fun BarcodeScanner(
     modifier: Modifier = Modifier,
     hasCameraAccess: Boolean,
     isCameraFacingBack: Boolean,
-    hasFoundBarcode: Boolean,
     onPermissionResult: (Boolean) -> Unit,
     onBarcodeScanned: (String) -> Unit,
 ) {
@@ -69,7 +70,7 @@ fun BarcodeScanner(
             screenWidth.value * screenDensity,
             screenHeight.value * screenDensity
         )
-//    val imageResolution = Size(1280, 720)
+    val imageResolution = Size(1280, 720)
 
     val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -86,13 +87,11 @@ fun BarcodeScanner(
         val preview = Preview.Builder().build()
         val imageAnalysis = createImageAnalysis(
             context,
-//            imageResolution,
+            imageResolution,
             overlay,
         ) {
             onBarcodeScanned(it)
         }
-
-        Log.d("BarcodeAnalyzer", "Rotation in Compose: ${previewView.display.rotation}")
 
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageAnalysis)
@@ -105,18 +104,18 @@ fun BarcodeScanner(
                 previewView.apply {
                     layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                     setBackgroundColor(Color.BLACK)
-                    scaleType = PreviewView.ScaleType.FILL_START
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
                 }
             })
 
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawPath(
                     path = overlay.path,
-                    color = if(hasFoundBarcode) composeColor.Green else composeColor.Red,
+                    color = composeColor.White,
                     style = Stroke(
                         width = 10.dp.value,
                         cap = StrokeCap.Round
-                    )
+                    ),
                 )
             }
         }
@@ -174,21 +173,21 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
 
 private fun createImageAnalysis(
     context: Context,
-//    imageResolution: Size,
+    imageResolution: Size,
     overlay: ScannerOverlay,
     onBarcodeScanned: (String) -> Unit
 ): ImageAnalysis {
 
-//    val resolutionStrategy = ResolutionStrategy(
-//        imageResolution,
-//        ResolutionStrategy.FALLBACK_RULE_NONE
-//    )
-//    val resolutionSelector = ResolutionSelector.Builder()
-//        .setResolutionStrategy(resolutionStrategy)
-//        .build()
+    val resolutionStrategy = ResolutionStrategy(
+        imageResolution,
+        ResolutionStrategy.FALLBACK_RULE_NONE
+    )
+    val resolutionSelector = ResolutionSelector.Builder()
+        .setResolutionStrategy(resolutionStrategy)
+        .build()
 
     val imageAnalysis = ImageAnalysis.Builder()
-//        .setResolutionSelector(resolutionSelector)
+        .setResolutionSelector(resolutionSelector)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
 

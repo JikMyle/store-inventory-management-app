@@ -10,6 +10,8 @@ import com.mobile_programming.sari_sari_inventory_app.data.dao.ReceiptDao
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
 import com.mobile_programming.sari_sari_inventory_app.data.relation.ProductSale
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -190,7 +192,10 @@ class ReceiptTableTest {
         val dateFromLastMonth = Calendar.getInstance().apply { add(Calendar.DATE, -30) }
 
         val totalRevenueFromQuery =
-            receiptDao.getRevenueFromDates(dateFromLastMonth.time, dateNow.time).sumOf {
+            receiptDao.getRevenueFromDates(dateFromLastMonth.time, dateNow.time)
+                .filterNotNull()
+                .first()
+                .sumOf {
                 it.totalRevenue
             }
 

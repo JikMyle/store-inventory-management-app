@@ -44,5 +44,5 @@ interface ProductDao {
             "AND r.dateCreated < :dateTo " +
             "AND ifnull(p.id = :id, 1) " +
             "GROUP BY p.id")
-    fun getSalesFromDates(id: Long?, dateFrom: Date, dateTo: Date) : List<ProductSale>
+    fun getSalesFromDates(id: Long?, dateFrom: Date, dateTo: Date) : Flow<List<ProductSale>>
 }

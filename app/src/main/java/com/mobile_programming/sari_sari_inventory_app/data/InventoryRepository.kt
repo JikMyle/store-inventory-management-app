@@ -15,34 +15,34 @@ interface InventoryRepository {
 
     suspend fun deleteProduct(product: Product)
 
-    suspend fun getAllProducts() : Flow<List<Product>>
+    fun getAllProducts() : Flow<List<Product>>
 
-    suspend fun getProduct(id: Long) : Flow<Product>
+    fun getProduct(id: Long) : Flow<Product>
 
-    suspend fun getProduct(nameOrNumber: String) : Flow<List<Product>>
+    fun getProduct(nameOrNumber: String) : Flow<List<Product>>
 
     // Receipt Functions
     suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long
 
     suspend fun deleteReceipt(receipt: Receipt)
 
-    suspend fun getAllReceipts() : Flow<List<Receipt>>
+    fun getAllReceipts() : Flow<List<Receipt>>
 
-    suspend fun getReceipt(id: Long) : Flow<Receipt>
+    fun getReceipt(id: Long) : Flow<Receipt>
 
     suspend fun getProductsInReceipt(id: Long) : Map<Product, Int>
 
-    suspend fun getReceiptTotalCost(id: Long) : Double
+    fun getReceiptTotalCost(id: Long) : Double
 
     // Statistics-Related Functions
     suspend fun getProductSalesFromDates(
         id: Long?,
         dateFrom: Date,
         dateTo: Date
-    ) : List<ProductSale>
+    ) : Flow<List<ProductSale>>
 
     suspend fun getRevenueFromDates(
         dateFrom: Date,
         dateTo: Date
-    ) : List<RevenueOnDate>
+    ) : Flow<List<RevenueOnDate>>
 }
