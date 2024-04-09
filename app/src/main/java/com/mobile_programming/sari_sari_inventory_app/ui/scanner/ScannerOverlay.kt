@@ -1,7 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.ui.scanner
 
 import android.graphics.PointF
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
