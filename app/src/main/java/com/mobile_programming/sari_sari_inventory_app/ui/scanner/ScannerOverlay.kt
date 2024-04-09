@@ -32,7 +32,6 @@ class ScannerOverlay(
     )
 
     val path = Path().apply {
-        Log.d("SCANNING", startingPoints.toString())
 
         startingPoints.forEach { point ->
             val pointXToCenterX = abs(rect.center.x - point.x)
@@ -101,13 +100,6 @@ class ScannerOverlay(
                 } else {
                     cornerY
                 }
-
-            Log.d("SCANNING", "Start: ${point.x}, ${point.y}")
-            Log.d("SCANNING", "CurveStart: $curveStartX, $curveStartY")
-            Log.d("SCANNING", "Corner: $cornerX, $cornerY")
-            Log.d("SCANNING", "CurveEnd: $curveEndX, $curveEndY")
-            Log.d("SCANNING", "End: $quadrantEndX, $quadrantEndY")
-            Log.d("SCANNING", "")
 
             moveTo(point.x, point.y)
             lineTo(curveStartX, curveStartY)

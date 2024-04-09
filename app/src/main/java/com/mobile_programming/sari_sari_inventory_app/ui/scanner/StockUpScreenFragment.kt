@@ -38,6 +38,7 @@ class StockUpScreenFragment : Fragment() {
             SariSariInventoryAppTheme {
                 StockUpScannerScreen(
                     viewModel = viewModel,
+                    navigateToProductEntry = { }
                 )
             }
         }

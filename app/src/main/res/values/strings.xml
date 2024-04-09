@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">SariSariInventoryApp</string>
+
+    <string name="product_number">Product Number</string>
+    <string name="product_name">Product Name</string>
+    <string name="product_price">Price</string>
+    <string name="product_stock">In Stock</string>
+    <string name="amount">Amount</string>
+
+    <string name="scan_barcode">Scan Barcode</string>
+    <string name="search_manually">or search manually</string>
+
+    <string name="amount_to_add">Amount To Add</string>
+    <string name="add_to_stock">Add To Stock</string>
+
+    <string name="new_product_dialog_message">
+        The barcode scanned has no existing records.
+        Would you like to create a new one?
+    </string>
+    <string name="add_new_product">Add New Product</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

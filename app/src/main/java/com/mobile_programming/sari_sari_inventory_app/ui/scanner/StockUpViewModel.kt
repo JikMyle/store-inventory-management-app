@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mobile_programming.sari_sari_inventory_app.data.InventoryRepository
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
+import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetails
+import com.mobile_programming.sari_sari_inventory_app.ui.product.toProduct
+import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,10 +25,10 @@ class StockUpViewModel(
     init {
         _uiState.update { stockUpUiState ->
             stockUpUiState.copy(
-                cameraState = cameraState,
+                scannerState = scannerState,
                 searchBarState = SearchBarState(
-                    onQueryChange = { updateQuery(it) },
-                    onActiveChange = { toggleSearchBar(it) }
+                    onQueryChange = ::updateQuery,
+                    onActiveChange = ::toggleSearchBar
                 )
             )
         }
@@ -36,7 +39,7 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                cameraState = cameraState
+                scannerState = scannerState
             )
         }
     }
@@ -46,35 +49,39 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                cameraState = cameraState
+                scannerState = scannerState
             )
         }
     }
 
     override fun onBarcodeScanned(productNumber: String) {
+        if (_uiState.value.scannedBarcode.isNotEmpty()) return
+
+        _uiState.update {
+            it.copy(scannedBarcode = productNumber)
+        }
+
         viewModelScope.launch {
             val productList = getProduct(productNumber)
 
             if (productList.isNotEmpty()) {
                 Log.d("BarcodeAnalyzer", productList.first().toString())
+
+                updateProductWithAmount(productList.first().toProductDetails())
+                toggleBottomSheet(true)
+
             } else if (productNumber.isNotBlank()) {
                 Log.d("BarcodeAnalyzer", "Barcode has no existing entry.")
+                _uiState.update {
+                    it.copy(
+                        isNewProduct = true
+                    )
+                }
             }
         }
     }
 
-    private suspend fun getProduct(nameOrNumber: String): List<Product> {
-
-        return if (nameOrNumber.isNotEmpty()) {
-            inventoryRepository.getProduct(nameOrNumber)
-                .filterNotNull()
-                .first()
-        } else {
-            listOf()
-        }
-    }
-
-    private fun toggleSearchBar(isActive: Boolean) {
+    fun toggleSearchBar(isActive: Boolean) {
 
         val searchBarState = _uiState.value.searchBarState.copy(
             isActive = isActive
@@ -91,12 +98,35 @@ class StockUpViewModel(
         }
     }
 
+    fun toggleBottomSheet(isVisible: Boolean) {
+        _uiState.update {
+            it.copy(isBottomSheetVisible = isVisible)
+        }
+
+        if(!isVisible) {
+            clearBarcodeScanned()
+        }
+    }
+
     private fun updateQuery(query: String) {
+        val searchBarState = _uiState.value.searchBarState.copy(
+            searchQuery = query
+        )
+
+        _uiState.update {
+            it.copy(
+                searchBarState = searchBarState
+            )
+        }
+
+        updateSearchResults(query)
+    }
+
+    private fun updateSearchResults(query: String) {
         viewModelScope.launch {
             val productList = getProduct(query)
 
             val searchBarState = _uiState.value.searchBarState.copy(
-                searchQuery = query,
                 result = productList
             )
 
@@ -105,26 +135,63 @@ class StockUpViewModel(
                     searchBarState = searchBarState
                 )
             }
-
-//            _uiState.update {
-//                it.copy(
-//                    searchQuery = query,
-//                    searchResult = productList
-//                )
-//            }
         }
+    }
+
+    fun updateProductWithAmount(
+        productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
+        amount: Int = 0
+    ) {
+        _uiState.update {
+            it.copy(
+                productWithAmount = it.productWithAmount.copy(
+                    productDetails = productDetails,
+                    amount = amount
+                )
+            )
+        }
+    }
+
+    fun clearBarcodeScanned() {
+        _uiState.update {
+            it.copy(
+                scannedBarcode = "",
+                isNewProduct = false,
+                productWithAmount = ProductWithAmount()
+            )
+        }
+    }
+
+    private suspend fun getProduct(nameOrNumber: String): List<Product> {
+
+        return if (nameOrNumber.isNotEmpty()) {
+            inventoryRepository.getProduct(nameOrNumber)
+                .filterNotNull()
+                .first()
+        } else {
+            listOf()
+        }
+    }
+
+    suspend fun increaseProductStock() {
+        val amount = _uiState.value.productWithAmount.amount
+        val product = _uiState.value.productWithAmount.productDetails
+            .toProduct()
+
+        inventoryRepository.updateProduct(
+            product.copy(stock = product.stock.plus(amount))
+        )
     }
 }
 
 data class StockUpUiState(
-    val cameraState: CameraState = CameraState(),
-    val searchBarState: SearchBarState<Product> = SearchBarState()
-//    val hasCameraAccess: Boolean = false,
-//    val isCameraFacingBack: Boolean = true,
-//
-//    val isSearchActive: Boolean = false,
-//    val searchQuery: String = "",
-//    val searchResult: List<Product> = listOf(),
+    val scannerState: ScannerState = ScannerState(),
+    val searchBarState: SearchBarState<Product> = SearchBarState(),
+
+    val scannedBarcode: String = "",
+    val isNewProduct: Boolean = false,
+    val isBottomSheetVisible: Boolean = false,
+    val productWithAmount: ProductWithAmount = ProductWithAmount()
 )
 
 data class SearchBarState<T>(
@@ -133,5 +200,10 @@ data class SearchBarState<T>(
     val result: List<T> = emptyList(),
     val onQueryChange: (String) -> Unit = { },
     val onSearch: (String) -> Unit = onQueryChange,
-    val onActiveChange: (Boolean) -> Unit = { },
+    val onActiveChange: (Boolean) -> Unit = { }
+)
+
+data class ProductWithAmount(
+    val productDetails: ProductDetails = ProductDetails(),
+    val amount: Int = 0,
 )

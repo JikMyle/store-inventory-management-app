@@ -4,20 +4,20 @@ import androidx.lifecycle.ViewModel
 
 abstract class BarcodeScannerViewModel : ViewModel()  {
 
-    protected var cameraState = CameraState()
+    protected var scannerState = ScannerState()
     open fun onPermissionResult(isGranted: Boolean) {
-        cameraState = cameraState.copy(hasCameraAccess = isGranted)
+        scannerState = scannerState.copy(hasCameraAccess = isGranted)
     }
     open fun switchCamera() {
-        cameraState = cameraState.copy(
-            isCameraFacingBack = !cameraState.isCameraFacingBack
+        scannerState = scannerState.copy(
+            isCameraFacingBack = !scannerState.isCameraFacingBack
         )
     }
 
     abstract fun onBarcodeScanned(productNumber: String)
 }
 
-data class CameraState(
+data class ScannerState(
     val hasCameraAccess: Boolean = false,
     val isCameraFacingBack : Boolean = true,
 )

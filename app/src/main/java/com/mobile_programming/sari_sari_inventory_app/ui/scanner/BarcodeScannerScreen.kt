@@ -36,9 +36,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -52,7 +54,7 @@ import androidx.compose.ui.graphics.Color as composeColor
 @Composable
 fun BarcodeScanner(
     modifier: Modifier = Modifier,
-    cameraState: CameraState,
+    scannerState: ScannerState,
     onSwitchCamera: () -> Unit,
     onPermissionResult: (Boolean) -> Unit,
     onBarcodeScanned: (String) -> Unit,
@@ -64,7 +66,7 @@ fun BarcodeScanner(
         onPermissionResult(isGranted)
     }
 
-    LaunchedEffect(cameraState.isCameraFacingBack) {
+    LaunchedEffect(scannerState.isCameraFacingBack) {
         cameraPermissionResultLauncher.launch(
             Manifest.permission.CAMERA
         )
@@ -72,12 +74,28 @@ fun BarcodeScanner(
 
     LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
-    if (cameraState.hasCameraAccess) {
-        BarcodeScannerPreviewView(
-            isCameraFacingBack = cameraState.isCameraFacingBack,
-            onSwitchCamera = onSwitchCamera,
-            onBarcodeScanned = onBarcodeScanned
-        )
+
+    if (scannerState.hasCameraAccess) {
+        Box(modifier = modifier.fillMaxSize()) {
+            BarcodeScannerPreviewView(
+                isCameraFacingBack = scannerState.isCameraFacingBack,
+                onBarcodeScanned = onBarcodeScanned
+            )
+
+            IconButton(
+                onClick = onSwitchCamera,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(dimensionResource(R.dimen.content_padding))
+            ) {
+
+                Icon(
+                    painter = painterResource(R.drawable.round_flip_camera_android_24),
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null
+                )
+            }
+        }
     }
 }
 
@@ -85,7 +103,6 @@ fun BarcodeScanner(
 fun BarcodeScannerPreviewView(
     modifier: Modifier = Modifier,
     isCameraFacingBack: Boolean,
-    onSwitchCamera: () -> Unit,
     onBarcodeScanned: (String) -> Unit,
 ) {
     val lensFacing =
@@ -103,7 +120,7 @@ fun BarcodeScannerPreviewView(
 
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
-    val screenDensity = Resources.getSystem().displayMetrics.density
+    val screenDensity = LocalDensity.current.density
 
     val overlay =
         ScannerOverlay(
@@ -164,7 +181,7 @@ fun BarcodeScannerPreviewView(
         }
 
         Text(
-            text = "SCAN BARCODE",
+            text = stringResource(R.string.scan_barcode),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
@@ -174,20 +191,6 @@ fun BarcodeScannerPreviewView(
                     y = -(overlay.size / Resources.getSystem().displayMetrics.density / 1.5).dp
                 )
         )
-
-        IconButton(
-            onClick = onSwitchCamera,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(dimensionResource(R.dimen.content_padding))
-        ) {
-
-            Icon(
-                painter = painterResource(R.drawable.round_flip_camera_android_24),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null
-            )
-        }
     }
 }
 
