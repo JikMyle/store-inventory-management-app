@@ -103,7 +103,7 @@ class StockUpViewModel(
             it.copy(isBottomSheetVisible = isVisible)
         }
 
-        if(!isVisible) {
+        if (!isVisible) {
             clearBarcodeScanned()
         }
     }

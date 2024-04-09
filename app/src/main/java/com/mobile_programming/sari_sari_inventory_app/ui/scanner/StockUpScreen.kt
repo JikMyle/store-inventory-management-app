@@ -55,7 +55,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
-import com.mobile_programming.sari_sari_inventory_app.ui.product.formattedPrice
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import com.mobile_programming.sari_sari_inventory_app.ui.theme.SariSariInventoryAppTheme
 import kotlinx.coroutines.launch
@@ -223,7 +222,7 @@ fun BarcodeSearchResultsList(
 ) {
     LazyColumn(modifier = modifier) {
         items(products) {
-            BarcodeSearchResultItem(
+            BarcodeSearchResultsItem(
                 product = it,
                 modifier = Modifier.clickable { onResultClick(it) }
             )
@@ -232,7 +231,7 @@ fun BarcodeSearchResultsList(
 }
 
 @Composable
-fun BarcodeSearchResultItem(
+fun BarcodeSearchResultsItem(
     modifier: Modifier = Modifier,
     product: Product
 ) {
@@ -245,7 +244,7 @@ fun BarcodeSearchResultItem(
                 dimensionResource(R.dimen.padding_small)
             )
     ) {
-        Column(modifier = Modifier.fillMaxWidth(0.65f)) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = product.productNumber ?: "",
                 style = MaterialTheme.typography.labelSmall,
@@ -261,26 +260,26 @@ fun BarcodeSearchResultItem(
             )
         }
 
-        Column(
-            horizontalAlignment = Alignment.End,
-        ) {
-            Text(
-                text = product.formattedPrice(),
-                style = MaterialTheme.typography.labelSmall,
-            )
-            Row {
-                Text(
-                    text = stringResource(R.string.product_stock) + ": ",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                Text(
-                    text = product.stock.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+//        Column(
+//            horizontalAlignment = Alignment.End,
+//        ) {
+//            Text(
+//                text = product.formattedPrice(),
+//                style = MaterialTheme.typography.labelSmall,
+//            )
+//            Row {
+//                Text(
+//                    text = stringResource(R.string.product_stock) + ": ",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                )
+//
+//                Text(
+//                    text = product.stock.toString(),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//        }
     }
 }
 
