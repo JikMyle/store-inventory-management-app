@@ -2,7 +2,6 @@ package com.mobile_programming.sari_sari_inventory_app.ui.scanner
 
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,22 +15,16 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -151,135 +144,6 @@ fun StockUpScannerScreen(
                 }
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BarcodeScannerSearchBar(
-    modifier: Modifier = Modifier,
-    searchBarState: SearchBarState<Product>,
-    onResultClick: (Product) -> Unit,
-    navigateToProductEntry: () -> Unit
-) {
-
-    SearchBar(
-        query = searchBarState.searchQuery,
-        onQueryChange = { searchBarState.onQueryChange(it) },
-        onSearch = { searchBarState.onQueryChange(it) },
-        active = searchBarState.isActive,
-        onActiveChange = { searchBarState.onActiveChange(it) },
-        placeholder = { Text("Enter product number or name") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null
-            )
-        },
-        trailingIcon = {
-            if (searchBarState.isActive) {
-                IconButton(onClick = { searchBarState.onActiveChange(false) }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = null
-                    )
-                }
-            }
-        },
-        modifier = modifier,
-    ) {
-        BarcodeSearchResultsList(
-            products = searchBarState.result,
-            onResultClick = onResultClick,
-        )
-
-        TextButton(
-            onClick = navigateToProductEntry,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null
-                )
-
-                Text(
-                    text = stringResource(R.string.add_new_product)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun BarcodeSearchResultsList(
-    products: List<Product>,
-    modifier: Modifier = Modifier,
-    onResultClick: (Product) -> Unit,
-) {
-    LazyColumn(modifier = modifier) {
-        items(products) {
-            BarcodeSearchResultsItem(
-                product = it,
-                modifier = Modifier.clickable { onResultClick(it) }
-            )
-        }
-    }
-}
-
-@Composable
-fun BarcodeSearchResultsItem(
-    modifier: Modifier = Modifier,
-    product: Product
-) {
-    Row(
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                dimensionResource(R.dimen.padding_small)
-            )
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = product.productNumber ?: "",
-                style = MaterialTheme.typography.labelSmall,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            Text(
-                text = product.productName,
-                style = MaterialTheme.typography.bodyMedium,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-//        Column(
-//            horizontalAlignment = Alignment.End,
-//        ) {
-//            Text(
-//                text = product.formattedPrice(),
-//                style = MaterialTheme.typography.labelSmall,
-//            )
-//            Row {
-//                Text(
-//                    text = stringResource(R.string.product_stock) + ": ",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                )
-//
-//                Text(
-//                    text = product.stock.toString(),
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//        }
     }
 }
 

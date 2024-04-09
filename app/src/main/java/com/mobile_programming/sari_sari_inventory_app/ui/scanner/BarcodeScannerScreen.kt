@@ -18,14 +18,28 @@ import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,10 +56,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.mobile_programming.sari_sari_inventory_app.R
+import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.ui.LockScreenOrientation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -191,6 +207,135 @@ fun BarcodeScannerPreviewView(
                     y = -(overlay.size / Resources.getSystem().displayMetrics.density / 1.5).dp
                 )
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BarcodeScannerSearchBar(
+    modifier: Modifier = Modifier,
+    searchBarState: SearchBarState<Product>,
+    onResultClick: (Product) -> Unit,
+    navigateToProductEntry: () -> Unit
+) {
+
+    SearchBar(
+        query = searchBarState.searchQuery,
+        onQueryChange = { searchBarState.onQueryChange(it) },
+        onSearch = { searchBarState.onQueryChange(it) },
+        active = searchBarState.isActive,
+        onActiveChange = { searchBarState.onActiveChange(it) },
+        placeholder = { Text("Enter product number or name") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            if (searchBarState.isActive) {
+                IconButton(onClick = { searchBarState.onActiveChange(false) }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null
+                    )
+                }
+            }
+        },
+        modifier = modifier,
+    ) {
+        BarcodeSearchResultsList(
+            products = searchBarState.result,
+            onResultClick = onResultClick,
+        )
+
+        TextButton(
+            onClick = navigateToProductEntry,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
+
+                Text(
+                    text = stringResource(R.string.add_new_product)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BarcodeSearchResultsList(
+    products: List<Product>,
+    modifier: Modifier = Modifier,
+    onResultClick: (Product) -> Unit,
+) {
+    LazyColumn(modifier = modifier) {
+        items(products) {
+            BarcodeSearchResultsItem(
+                product = it,
+                modifier = Modifier.clickable { onResultClick(it) }
+            )
+        }
+    }
+}
+
+@Composable
+fun BarcodeSearchResultsItem(
+    modifier: Modifier = Modifier,
+    product: Product
+) {
+    Row(
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                dimensionResource(R.dimen.padding_small)
+            )
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = product.productNumber ?: "",
+                style = MaterialTheme.typography.labelSmall,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+            Text(
+                text = product.productName,
+                style = MaterialTheme.typography.bodyMedium,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+//        Column(
+//            horizontalAlignment = Alignment.End,
+//        ) {
+//            Text(
+//                text = product.formattedPrice(),
+//                style = MaterialTheme.typography.labelSmall,
+//            )
+//            Row {
+//                Text(
+//                    text = stringResource(R.string.product_stock) + ": ",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                )
+//
+//                Text(
+//                    text = product.stock.toString(),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//        }
     }
 }
 
