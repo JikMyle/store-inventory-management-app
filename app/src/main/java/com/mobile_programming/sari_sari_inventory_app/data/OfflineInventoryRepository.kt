@@ -7,8 +7,6 @@ import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
 import com.mobile_programming.sari_sari_inventory_app.data.relation.ProductSale
 import com.mobile_programming.sari_sari_inventory_app.data.relation.RevenueOnDate
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import java.util.Date
 
 class OfflineInventoryRepository(
@@ -57,14 +55,15 @@ class OfflineInventoryRepository(
         return receiptDao.getAllReceipts()
     }
 
-    override fun getReceipt(id: Long): Flow<Receipt> {
+    override fun getReceipt(id: Long): Flow<Receipt?> {
         return receiptDao.getReceipt(id)
     }
 
     // Is it better to return a map of <Object(Product), Int> or <Long(ProductId), Int)>?
-    override suspend fun getProductsInReceipt(id: Long): Map<Product, Int> {
+    // May have problems and break
+    override suspend fun getProductsInReceipt(id: Long): Map<Long, Int> {
         return receiptDao.getListOfProducts(id).associateBy (
-            { productDao.getProduct(it.productId).filterNotNull().first() },
+            { it.productId },
             { it.amount }
         )
     }

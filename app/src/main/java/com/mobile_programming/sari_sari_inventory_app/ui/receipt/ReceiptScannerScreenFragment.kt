@@ -19,7 +19,6 @@ class ReceiptScannerScreenFragment : Fragment() {
     private lateinit var binding: FragmentReceiptScannerBinding
     private lateinit var scannerViewModel: ReceiptScannerViewModel
     private lateinit var receiptViewModel: ReceiptViewModel
-    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,8 +37,6 @@ class ReceiptScannerScreenFragment : Fragment() {
         val viewModelProvider = ViewModelProvider(requireActivity(), factory)
         scannerViewModel = viewModelProvider[ReceiptScannerViewModel::class.java]
         receiptViewModel = viewModelProvider[ReceiptViewModel::class.java]
-
-        navController = (activity as MainActivity).findNavController(R.id.navHostFragment)
 
         binding.receiptScannerScreenComposeView.setContent {
             SariSariInventoryAppTheme {
