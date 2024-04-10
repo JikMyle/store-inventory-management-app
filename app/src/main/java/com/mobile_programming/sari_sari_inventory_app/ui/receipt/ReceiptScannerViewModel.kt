@@ -162,13 +162,23 @@ class ReceiptScannerViewModel(
         productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
         amount: Int = 0
     ) {
+        val productWithAmount = _uiState.value.productWithAmount.copy(
+            productDetails = productDetails,
+            amount = amount,
+        )
+
         _uiState.update {
             it.copy(
-                productWithAmount = it.productWithAmount.copy(
-                    productDetails = productDetails,
-                    amount = amount
-                )
+                productWithAmount = productWithAmount,
+                isInputValid = validateInput(productWithAmount)
             )
         }
+    }
+
+    private fun validateInput(productWithAmount: ProductWithAmount) : Boolean {
+        val productStock = productWithAmount.productDetails.stock.toIntOrNull() ?: 0
+        val amount = productWithAmount.amount
+
+        return amount != 0 && amount <= productStock
     }
 }

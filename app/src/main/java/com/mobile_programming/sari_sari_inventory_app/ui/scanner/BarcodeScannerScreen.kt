@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -34,12 +35,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -246,7 +248,14 @@ fun BarcodeScannerSearchBar(
             onResultClick = onResultClick,
         )
 
-        TextButton(
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                dimensionResource(R.dimen.padding_small)
+            )
+        )
+
+        OutlinedButton(
             onClick = navigateToProductEntry,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -279,6 +288,12 @@ fun BarcodeSearchResultsList(
                 product = it,
                 modifier = Modifier.clickable { onResultClick(it) }
             )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(R.dimen.padding_small)
+                )
+            )
         }
     }
 }
@@ -299,17 +314,17 @@ fun BarcodeSearchResultsItem(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = product.productNumber ?: "",
-                style = MaterialTheme.typography.labelSmall,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            Text(
                 text = product.productName,
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = product.productNumber ?: "",
+                style = MaterialTheme.typography.labelSmall,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
     }

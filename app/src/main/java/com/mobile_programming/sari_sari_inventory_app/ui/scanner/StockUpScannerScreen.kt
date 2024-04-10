@@ -155,7 +155,8 @@ fun StockUpScannerBody(
                 sheetState = sheetState,
                 onDismissRequest = onBottomSheetDismiss,
                 onValueChange = onBottomSheetValueChange,
-                onButtonClick = onBottomSheetButtonClick
+                onButtonClick = onBottomSheetButtonClick,
+                isInputValid = uiState.value.isInputValid
             )
         }
 
@@ -179,6 +180,7 @@ fun StockUpBottomSheet(
     onDismissRequest: () -> Unit,
     onValueChange: (String) -> Unit,
     onButtonClick: () -> Unit,
+    isInputValid: Boolean,
 ) {
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -269,6 +271,7 @@ fun StockUpBottomSheet(
 
             Button(
                 onClick = onButtonClick,
+                enabled = isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

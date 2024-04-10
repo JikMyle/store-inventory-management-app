@@ -157,12 +157,15 @@ class StockUpScannerViewModel(
         productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
         amount: Int = 0
     ) {
+        val productWithAmount = _uiState.value.productWithAmount.copy(
+            productDetails = productDetails,
+            amount = amount,
+        )
+
         _uiState.update {
             it.copy(
-                productWithAmount = it.productWithAmount.copy(
-                    productDetails = productDetails,
-                    amount = amount
-                )
+                productWithAmount = productWithAmount,
+                isInputValid = validateInput(productWithAmount)
             )
         }
     }
@@ -176,6 +179,10 @@ class StockUpScannerViewModel(
             product.copy(stock = product.stock.plus(amount))
         )
     }
+
+    private fun validateInput(productWithAmount: ProductWithAmount) : Boolean {
+        return productWithAmount.amount != 0
+    }
 }
 
 data class ScannerUiState(
@@ -185,6 +192,7 @@ data class ScannerUiState(
     val scannedBarcode: String = "",
     val isNewProduct: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
+    val isInputValid: Boolean = false,
     val productWithAmount: ProductWithAmount = ProductWithAmount()
 )
 
