@@ -100,31 +100,36 @@ class ReceiptTableTest {
         val receipts = mutableListOf(
             Receipt(
                 1,
-                Calendar.getInstance().time
+                Calendar.getInstance().time,
+                0.0
             ),
             Receipt(
                 2,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -30)
-                }.time
+                }.time,
+                0.0
             ),
             Receipt(
                 3,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, 15)
-                }.time
+                }.time,
+                0.0
             ),
             Receipt(
                 4,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -16)
-                }.time
+                }.time,
+                0.0
             ),
             Receipt(
                 5,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -16)
-                }.time
+                }.time,
+                0.0
             ),
         )
 
@@ -251,7 +256,7 @@ class ReceiptTableTest {
             id = null,
             dateFrom = Calendar.getInstance().apply { add(Calendar.DATE, -30) }.time,
             dateTo = Calendar.getInstance().time
-        )
+        ).filterNotNull().first()
 
         assertEquals(expectedResult, queryResult)
     }

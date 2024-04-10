@@ -23,7 +23,7 @@ interface ReceiptDao {
     fun getAllReceipts() : Flow<List<Receipt>>
 
     @Query("SELECT * FROM receipts WHERE id = :id ")
-    fun getReceipt(id: Long) : Flow<Receipt>
+    fun getReceipt(id: Long) : Flow<Receipt?>
 
     /**
      * Attaches a product to the receipt via an associative entity

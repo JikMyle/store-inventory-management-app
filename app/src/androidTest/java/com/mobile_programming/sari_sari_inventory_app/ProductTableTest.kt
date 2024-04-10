@@ -9,6 +9,7 @@ import com.mobile_programming.sari_sari_inventory_app.data.dao.ProductDao
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -118,13 +119,13 @@ class ProductTableTest {
         productList[1] = productList[1].copy(productName = "Smoothie", price = 120.50)
         productDao.updateProduct(productList[1])
 
-        assertEquals(productList[1], productDao.getProduct(2))
+        assertEquals(productList[1], productDao.getProduct(2).firstOrNull())
 
         // Second Product in the list and database are deleted here
         productDao.deleteProduct(productList[1])
         productList.remove(productList[1])
 
-        assertEquals(productList, productDao.getAllProducts())
+        assertEquals(productList, productDao.getAllProducts().firstOrNull())
     }
 
     @Test
@@ -145,11 +146,15 @@ class ProductTableTest {
         assertEquals(
             filteredByProductNumber,
             productDao.getProduct(productNumberToFind)
+                .filterNotNull()
+                .first()
         )
 
         assertEquals(
             filteredByProductName,
             productDao.getProduct(productNameToFind)
+                .filterNotNull()
+                .first()
         )
     }
 
@@ -158,7 +163,7 @@ class ProductTableTest {
         populateProductTable()
         val incorrectId = 201
 
-        assertEquals(null, productDao.getProduct(incorrectId.toLong()))
+        assertEquals(null, productDao.getProduct(incorrectId.toLong()).firstOrNull())
     }
 
     @Test

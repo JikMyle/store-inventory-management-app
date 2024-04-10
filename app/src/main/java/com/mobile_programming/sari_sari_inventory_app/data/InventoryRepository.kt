@@ -28,9 +28,9 @@ interface InventoryRepository {
 
     fun getAllReceipts() : Flow<List<Receipt>>
 
-    fun getReceipt(id: Long) : Flow<Receipt>
+    fun getReceipt(id: Long) : Flow<Receipt?>
 
-    suspend fun getProductsInReceipt(id: Long) : Map<Product, Int>
+    suspend fun getProductsInReceipt(id: Long) : Map<Long, Int>
 
     fun getReceiptTotalCost(id: Long) : Double
 
