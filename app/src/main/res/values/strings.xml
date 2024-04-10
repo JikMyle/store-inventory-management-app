@@ -10,14 +10,17 @@
     <string name="scan_barcode">Scan Barcode</string>
     <string name="search_manually">or search manually</string>
 
-    <string name="amount_to_add">Amount To Add</string>
     <string name="add_to_stock">Add To Stock</string>
+    <string name="add_to_receipt">Add To Receipt</string>
+    <string name="add_new_product">Add New Product</string>
 
     <string name="new_product_dialog_message">
         The barcode scanned has no existing records.
         Would you like to create a new one?
     </string>
-    <string name="add_new_product">Add New Product</string>
+
+    <string name="product_stock_updated">Product Stock Updated!</string>
+    <string name="product_added_to_receipt">Product Added To Receipt!</string>
 
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>

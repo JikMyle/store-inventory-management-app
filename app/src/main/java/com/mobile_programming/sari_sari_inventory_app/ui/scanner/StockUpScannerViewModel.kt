@@ -10,26 +10,32 @@ import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class StockUpViewModel(
+class StockUpScannerViewModel(
     private val inventoryRepository: InventoryRepository
-) : BarcodeScannerViewModel() {
+) : BarcodeScannerViewModel(inventoryRepository) {
 
-    private var _uiState = MutableStateFlow(StockUpUiState())
-    val uiState: StateFlow<StockUpUiState> = _uiState.asStateFlow()
+    private var _uiState = MutableStateFlow(ScannerUiState())
+    val uiState: StateFlow<ScannerUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState.update { stockUpUiState ->
-            stockUpUiState.copy(
-                scannerState = scannerState,
-                searchBarState = SearchBarState(
-                    onQueryChange = ::updateQuery,
-                    onActiveChange = ::toggleSearchBar
-                )
+        val scannerCameraState = ScannerCameraState(
+            onPermissionResult = ::onPermissionResult,
+            onBarcodeScanned = ::onBarcodeScanned,
+            switchCamera = ::switchCamera
+        )
+
+        val searchBarState = SearchBarState<Product>(
+            onQueryChange = ::updateQuery,
+            onActiveChange = ::toggleSearchBar
+        )
+
+        _uiState.update {
+            it.copy(
+                scannerCameraState = scannerCameraState,
+                searchBarState = searchBarState
             )
         }
     }
@@ -39,7 +45,7 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                scannerState = scannerState
+                scannerCameraState = scannerCameraState
             )
         }
     }
@@ -49,7 +55,7 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                scannerState = scannerState
+                scannerCameraState = scannerCameraState
             )
         }
     }
@@ -78,6 +84,15 @@ class StockUpViewModel(
                     )
                 }
             }
+        }
+    }
+    fun clearBarcodeScanned() {
+        _uiState.update {
+            it.copy(
+                scannedBarcode = "",
+                isNewProduct = false,
+                productWithAmount = ProductWithAmount()
+            )
         }
     }
 
@@ -152,27 +167,6 @@ class StockUpViewModel(
         }
     }
 
-    fun clearBarcodeScanned() {
-        _uiState.update {
-            it.copy(
-                scannedBarcode = "",
-                isNewProduct = false,
-                productWithAmount = ProductWithAmount()
-            )
-        }
-    }
-
-    private suspend fun getProduct(nameOrNumber: String): List<Product> {
-
-        return if (nameOrNumber.isNotEmpty()) {
-            inventoryRepository.getProduct(nameOrNumber)
-                .filterNotNull()
-                .first()
-        } else {
-            listOf()
-        }
-    }
-
     suspend fun increaseProductStock() {
         val amount = _uiState.value.productWithAmount.amount
         val product = _uiState.value.productWithAmount.productDetails
@@ -184,8 +178,8 @@ class StockUpViewModel(
     }
 }
 
-data class StockUpUiState(
-    val scannerState: ScannerState = ScannerState(),
+data class ScannerUiState(
+    val scannerCameraState: ScannerCameraState = ScannerCameraState(),
     val searchBarState: SearchBarState<Product> = SearchBarState(),
 
     val scannedBarcode: String = "",

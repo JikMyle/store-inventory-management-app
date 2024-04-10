@@ -70,19 +70,16 @@ import androidx.compose.ui.graphics.Color as composeColor
 @Composable
 fun BarcodeScanner(
     modifier: Modifier = Modifier,
-    scannerState: ScannerState,
-    onSwitchCamera: () -> Unit,
-    onPermissionResult: (Boolean) -> Unit,
-    onBarcodeScanned: (String) -> Unit,
+    scannerCameraState: ScannerCameraState,
 ) {
 
     val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        onPermissionResult(isGranted)
+        scannerCameraState.onPermissionResult(isGranted)
     }
 
-    LaunchedEffect(scannerState.isCameraFacingBack) {
+    LaunchedEffect(scannerCameraState.isCameraFacingBack) {
         cameraPermissionResultLauncher.launch(
             Manifest.permission.CAMERA
         )
@@ -91,15 +88,15 @@ fun BarcodeScanner(
     LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
 
-    if (scannerState.hasCameraAccess) {
+    if (scannerCameraState.hasCameraAccess) {
         Box(modifier = modifier.fillMaxSize()) {
             BarcodeScannerPreviewView(
-                isCameraFacingBack = scannerState.isCameraFacingBack,
-                onBarcodeScanned = onBarcodeScanned
+                isCameraFacingBack = scannerCameraState.isCameraFacingBack,
+                onBarcodeScanned = scannerCameraState.onBarcodeScanned
             )
 
             IconButton(
-                onClick = onSwitchCamera,
+                onClick = scannerCameraState.switchCamera,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(dimensionResource(R.dimen.content_padding))
@@ -315,27 +312,6 @@ fun BarcodeSearchResultsItem(
                 fontWeight = FontWeight.Bold
             )
         }
-
-//        Column(
-//            horizontalAlignment = Alignment.End,
-//        ) {
-//            Text(
-//                text = product.formattedPrice(),
-//                style = MaterialTheme.typography.labelSmall,
-//            )
-//            Row {
-//                Text(
-//                    text = stringResource(R.string.product_stock) + ": ",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                )
-//
-//                Text(
-//                    text = product.stock.toString(),
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//        }
     }
 }
 
