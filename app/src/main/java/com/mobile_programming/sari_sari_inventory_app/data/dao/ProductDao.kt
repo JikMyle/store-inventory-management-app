@@ -26,7 +26,7 @@ interface ProductDao {
     fun getAllProducts() : Flow<List<Product>>
 
     @Query("SELECT * FROM products WHERE id = :id")
-    fun getProduct(id: Long) : Flow<Product>
+    fun getProduct(id: Long) : Flow<Product?>
 
     // I used a RawQuery here because Rooms do not take column names as parameters
     // Re: Instead of RawQuery, I just used a normal query, have the list be sorted in memory

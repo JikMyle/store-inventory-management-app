@@ -17,7 +17,7 @@ interface InventoryRepository {
 
     fun getAllProducts() : Flow<List<Product>>
 
-    fun getProduct(id: Long) : Flow<Product>
+    fun getProduct(id: Long) : Flow<Product?>
 
     fun getProduct(nameOrNumber: String) : Flow<List<Product>>
 

@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -52,26 +53,68 @@ import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetail
 import com.mobile_programming.sari_sari_inventory_app.ui.theme.SariSariInventoryAppTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockUpScannerScreen(
     modifier: Modifier = Modifier,
-    viewModel: StockUpViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: StockUpScannerViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToProductEntry: (String) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
-
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    StockUpScannerBody(
+        uiState = uiState,
+        onResultClick = {
+            viewModel.updateProductWithAmount(
+                productDetails = it.toProductDetails()
+            )
+            viewModel.toggleBottomSheet(true)
+            viewModel.toggleSearchBar(false)
+        },
+        onBottomSheetDismiss = {
+            viewModel.toggleBottomSheet(false)
+        },
+        onBottomSheetValueChange = {
+            viewModel.updateProductWithAmount(
+                amount = it.toIntOrNull() ?: 0
+            )
+        },
+        onBottomSheetButtonClick = {
+            scope.launch {
+                viewModel.increaseProductStock()
+                viewModel.toggleBottomSheet(false)
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.product_stock_updated),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        },
+        onDialogDismiss = viewModel::clearBarcodeScanned,
+        navigateToProductEntry = navigateToProductEntry,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StockUpScannerBody(
+    modifier: Modifier = Modifier,
+    uiState: State<ScannerUiState>,
+    onResultClick: (Product) -> Unit,
+    onBottomSheetDismiss: () -> Unit,
+    onBottomSheetValueChange: (String) -> Unit,
+    onBottomSheetButtonClick: () -> Unit,
+    onDialogDismiss: () -> Unit,
+    navigateToProductEntry: (String) -> Unit,
+) {
     val sheetState = rememberModalBottomSheetState()
 
     Box(modifier = modifier.fillMaxSize()) {
         if (!uiState.value.searchBarState.isActive) {
             BarcodeScanner(
-                scannerState = uiState.value.scannerState,
-                onSwitchCamera = viewModel::switchCamera,
-                onPermissionResult = viewModel::onPermissionResult,
-                onBarcodeScanned = viewModel::onBarcodeScanned,
+                scannerCameraState = uiState.value.scannerCameraState,
             )
         }
 
@@ -80,7 +123,7 @@ fun StockUpScannerScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
         ) {
-            if(!uiState.value.searchBarState.isActive) {
+            if (!uiState.value.searchBarState.isActive) {
                 Text(
                     text = stringResource(R.string.search_manually),
                     style = MaterialTheme.typography.labelLarge,
@@ -90,16 +133,10 @@ fun StockUpScannerScreen(
 
             BarcodeScannerSearchBar(
                 searchBarState = uiState.value.searchBarState,
-                onResultClick = {
-                    viewModel.updateProductWithAmount(
-                        productDetails = it.toProductDetails()
-                    )
-                    viewModel.toggleBottomSheet(true)
-                    viewModel.toggleSearchBar(false)
-                },
+                onResultClick = onResultClick,
                 navigateToProductEntry = { navigateToProductEntry("") },
                 modifier = Modifier.then(
-                    if(!uiState.value.searchBarState.isActive) {
+                    if (!uiState.value.searchBarState.isActive) {
                         Modifier.padding(
                             bottom = dimensionResource(R.dimen.padding_small),
                             start = dimensionResource(R.dimen.padding_small),
@@ -116,29 +153,16 @@ fun StockUpScannerScreen(
             StockUpBottomSheet(
                 productWithAmount = uiState.value.productWithAmount,
                 sheetState = sheetState,
-                onDismissRequest = { viewModel.toggleBottomSheet(false) },
-                onValueChange = {
-                    viewModel.updateProductWithAmount(
-                        amount = it.toIntOrNull() ?: 0
-                    )
-                },
-                onButtonClick = {
-                    scope.launch {
-                        viewModel.increaseProductStock()
-                        viewModel.toggleBottomSheet(false)
-                        Toast.makeText(
-                            context,
-                            "Product stock updated!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+                onDismissRequest = onBottomSheetDismiss,
+                onValueChange = onBottomSheetValueChange,
+                onButtonClick = onBottomSheetButtonClick,
+                isInputValid = uiState.value.isInputValid
             )
         }
 
         if (uiState.value.isNewProduct) {
             NewProductDialog(
-                onDismissRequest = viewModel::clearBarcodeScanned,
+                onDismissRequest = onDialogDismiss,
                 navigateToProductEntry = {
                     navigateToProductEntry(uiState.value.scannedBarcode)
                 }
@@ -156,6 +180,7 @@ fun StockUpBottomSheet(
     onDismissRequest: () -> Unit,
     onValueChange: (String) -> Unit,
     onButtonClick: () -> Unit,
+    isInputValid: Boolean,
 ) {
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -230,7 +255,7 @@ fun StockUpBottomSheet(
                     label = {
                         Text(
                             stringResource(
-                                R.string.amount_to_add
+                                R.string.amount
                             )
                         )
                     },
@@ -246,6 +271,7 @@ fun StockUpBottomSheet(
 
             Button(
                 onClick = onButtonClick,
+                enabled = isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -302,7 +328,7 @@ fun NewProductDialog(
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        Card{
+        Card {
             Column(
                 modifier = modifier
                     .padding(

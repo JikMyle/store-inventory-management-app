@@ -12,9 +12,9 @@ import com.mobile_programming.sari_sari_inventory_app.databinding.FragmentStockU
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
 import com.mobile_programming.sari_sari_inventory_app.ui.theme.SariSariInventoryAppTheme
 
-class StockUpScreenFragment : Fragment() {
+class StockUpScannerScreenFragment : Fragment() {
     private lateinit var binding: FragmentStockUpScannerBinding
-    private lateinit var viewModel: StockUpViewModel
+    private lateinit var viewModel: StockUpScannerViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +32,7 @@ class StockUpScreenFragment : Fragment() {
         val factory = AppViewModelProvider.Factory
         val viewModelProvider = ViewModelProvider(requireActivity(), factory)
 
-        viewModel = viewModelProvider[StockUpViewModel::class.java]
+        viewModel = viewModelProvider[StockUpScannerViewModel::class.java]
 
         binding.stockUpScannerComposeView.setContent {
             SariSariInventoryAppTheme {

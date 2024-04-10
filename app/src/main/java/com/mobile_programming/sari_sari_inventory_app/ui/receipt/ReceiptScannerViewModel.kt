@@ -1,35 +1,45 @@
-package com.mobile_programming.sari_sari_inventory_app.ui.scanner
+package com.mobile_programming.sari_sari_inventory_app.ui.receipt
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mobile_programming.sari_sari_inventory_app.data.InventoryRepository
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetails
-import com.mobile_programming.sari_sari_inventory_app.ui.product.toProduct
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScannerViewModel
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductWithAmount
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ScannerCameraState
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ScannerUiState
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.SearchBarState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class StockUpViewModel(
-    private val inventoryRepository: InventoryRepository
-) : BarcodeScannerViewModel() {
+class ReceiptScannerViewModel(
+    inventoryRepository: InventoryRepository
+) : BarcodeScannerViewModel(inventoryRepository) {
 
-    private var _uiState = MutableStateFlow(StockUpUiState())
-    val uiState: StateFlow<StockUpUiState> = _uiState.asStateFlow()
+    private var _uiState = MutableStateFlow(ScannerUiState())
+    val uiState: StateFlow<ScannerUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState.update { stockUpUiState ->
-            stockUpUiState.copy(
-                scannerState = scannerState,
-                searchBarState = SearchBarState(
-                    onQueryChange = ::updateQuery,
-                    onActiveChange = ::toggleSearchBar
-                )
+        val scannerCameraState = ScannerCameraState(
+            onPermissionResult = ::onPermissionResult,
+            onBarcodeScanned = ::onBarcodeScanned,
+            switchCamera = ::switchCamera
+        )
+
+        val searchBarState = SearchBarState<Product>(
+            onQueryChange = ::updateQuery,
+            onActiveChange = ::toggleSearchBar
+        )
+
+        _uiState.update {
+            it.copy(
+                scannerCameraState = scannerCameraState,
+                searchBarState = searchBarState
             )
         }
     }
@@ -39,7 +49,7 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                scannerState = scannerState
+                scannerCameraState = scannerCameraState
             )
         }
     }
@@ -49,7 +59,7 @@ class StockUpViewModel(
 
         _uiState.update {
             it.copy(
-                scannerState = scannerState
+                scannerCameraState = scannerCameraState
             )
         }
     }
@@ -78,6 +88,16 @@ class StockUpViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun clearBarcodeScanned() {
+        _uiState.update {
+            it.copy(
+                scannedBarcode = "",
+                isNewProduct = false,
+                productWithAmount = ProductWithAmount()
+            )
         }
     }
 
@@ -142,68 +162,23 @@ class StockUpViewModel(
         productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
         amount: Int = 0
     ) {
-        _uiState.update {
-            it.copy(
-                productWithAmount = it.productWithAmount.copy(
-                    productDetails = productDetails,
-                    amount = amount
-                )
-            )
-        }
-    }
-
-    fun clearBarcodeScanned() {
-        _uiState.update {
-            it.copy(
-                scannedBarcode = "",
-                isNewProduct = false,
-                productWithAmount = ProductWithAmount()
-            )
-        }
-    }
-
-    private suspend fun getProduct(nameOrNumber: String): List<Product> {
-
-        return if (nameOrNumber.isNotEmpty()) {
-            inventoryRepository.getProduct(nameOrNumber)
-                .filterNotNull()
-                .first()
-        } else {
-            listOf()
-        }
-    }
-
-    suspend fun increaseProductStock() {
-        val amount = _uiState.value.productWithAmount.amount
-        val product = _uiState.value.productWithAmount.productDetails
-            .toProduct()
-
-        inventoryRepository.updateProduct(
-            product.copy(stock = product.stock.plus(amount))
+        val productWithAmount = _uiState.value.productWithAmount.copy(
+            productDetails = productDetails,
+            amount = amount,
         )
+
+        _uiState.update {
+            it.copy(
+                productWithAmount = productWithAmount,
+                isInputValid = validateInput(productWithAmount)
+            )
+        }
+    }
+
+    private fun validateInput(productWithAmount: ProductWithAmount) : Boolean {
+        val productStock = productWithAmount.productDetails.stock.toIntOrNull() ?: 0
+        val amount = productWithAmount.amount
+
+        return amount != 0 && amount <= productStock
     }
 }
-
-data class StockUpUiState(
-    val scannerState: ScannerState = ScannerState(),
-    val searchBarState: SearchBarState<Product> = SearchBarState(),
-
-    val scannedBarcode: String = "",
-    val isNewProduct: Boolean = false,
-    val isBottomSheetVisible: Boolean = false,
-    val productWithAmount: ProductWithAmount = ProductWithAmount()
-)
-
-data class SearchBarState<T>(
-    val isActive: Boolean = false,
-    val searchQuery: String = "",
-    val result: List<T> = emptyList(),
-    val onQueryChange: (String) -> Unit = { },
-    val onSearch: (String) -> Unit = onQueryChange,
-    val onActiveChange: (Boolean) -> Unit = { }
-)
-
-data class ProductWithAmount(
-    val productDetails: ProductDetails = ProductDetails(),
-    val amount: Int = 0,
-)

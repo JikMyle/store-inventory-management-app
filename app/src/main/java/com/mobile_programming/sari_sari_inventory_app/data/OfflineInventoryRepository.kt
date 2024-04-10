@@ -31,7 +31,7 @@ class OfflineInventoryRepository(
         return productDao.getAllProducts()
     }
 
-    override fun getProduct(id: Long): Flow<Product> {
+    override fun getProduct(id: Long): Flow<Product?> {
         return productDao.getProduct(id)
     }
 
