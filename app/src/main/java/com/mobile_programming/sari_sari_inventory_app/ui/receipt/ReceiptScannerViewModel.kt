@@ -72,7 +72,7 @@ class ReceiptScannerViewModel(
         }
 
         viewModelScope.launch {
-            val productList = getProduct(productNumber)
+            val productList = searchForProduct(productNumber)
 
             if (productList.isNotEmpty()) {
                 Log.d("BarcodeAnalyzer", productList.first().toString())
@@ -144,7 +144,7 @@ class ReceiptScannerViewModel(
 
     private fun updateSearchResults(query: String) {
         viewModelScope.launch {
-            val productList = getProduct(query)
+            val productList = searchForProduct(query)
 
             val searchBarState = _uiState.value.searchBarState.copy(
                 result = productList

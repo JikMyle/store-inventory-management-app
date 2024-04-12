@@ -36,6 +36,7 @@ abstract class InventoryDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context, InventoryDatabase::class.java, "inventoryDatabase"
                 )
+                    .createFromAsset("database/inventoryDatabase.db")
                     .build()
                     .also { Instance = it }
             }

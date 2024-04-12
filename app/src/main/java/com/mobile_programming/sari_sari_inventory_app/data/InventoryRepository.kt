@@ -19,7 +19,11 @@ interface InventoryRepository {
 
     fun getProduct(id: Long) : Flow<Product?>
 
-    fun getProduct(nameOrNumber: String) : Flow<List<Product>>
+    fun getProductByNumber(productNumber: String) : Flow<Product?>
+
+    fun getProductByName(productName: String) : Flow<Product?>
+
+    fun searchForProduct(nameOrNumber: String) : Flow<List<Product>>
 
     // Receipt Functions
     suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long

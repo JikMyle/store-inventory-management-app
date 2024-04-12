@@ -26,10 +26,10 @@ abstract class BarcodeScannerViewModel(
         )
     }
 
-    protected suspend fun getProduct(nameOrNumber: String): List<Product> {
+    protected suspend fun searchForProduct(nameOrNumber: String): List<Product> {
 
         return if (nameOrNumber.isNotEmpty()) {
-            inventoryRepository.getProduct(nameOrNumber)
+            inventoryRepository.searchForProduct(nameOrNumber)
                 .filterNotNull()
                 .first()
         } else {

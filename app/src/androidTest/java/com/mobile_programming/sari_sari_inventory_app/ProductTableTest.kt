@@ -145,14 +145,14 @@ class ProductTableTest {
 
         assertEquals(
             filteredByProductNumber,
-            productDao.getProduct(productNumberToFind)
+            productDao.searchForProduct(productNumberToFind)
                 .filterNotNull()
                 .first()
         )
 
         assertEquals(
             filteredByProductName,
-            productDao.getProduct(productNameToFind)
+            productDao.searchForProduct(productNameToFind)
                 .filterNotNull()
                 .first()
         )
@@ -173,7 +173,7 @@ class ProductTableTest {
         val incorrectName = "!@#naksdjak!!@#bad"
         val incorrectNumber = "131314215315535151"
 
-        assertTrue(productDao.getProduct(incorrectName).filterNotNull().first().isEmpty())
-        assertTrue(productDao.getProduct(incorrectNumber).filterNotNull().first().isEmpty())
+        assertTrue(productDao.searchForProduct(incorrectName).filterNotNull().first().isEmpty())
+        assertTrue(productDao.searchForProduct(incorrectNumber).filterNotNull().first().isEmpty())
     }
 }
