@@ -21,9 +21,9 @@ interface InventoryRepository {
 
     fun getProductByNumber(productNumber: String) : Flow<Product?>
 
-    fun getProductByName(productName: String) : Flow<Product?>
-
     fun searchForProduct(nameOrNumber: String) : Flow<List<Product>>
+
+    fun checkIfProductNumberExists(productNumber: String) : Boolean
 
     // Receipt Functions
     suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long

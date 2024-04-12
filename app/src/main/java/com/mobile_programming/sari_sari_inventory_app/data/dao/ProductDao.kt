@@ -31,8 +31,8 @@ interface ProductDao {
     @Query("SELECT * FROM products WHERE productNumber = :productNumber")
     fun getProductByNumber(productNumber: String) : Flow<Product?>
 
-    @Query("SELECT * FROM products WHERE productName = :productName")
-    fun getProductByName(productName: String) : Flow<Product?>
+    @Query("SELECT EXISTS(SELECT 1 FROM products WHERE productNumber = :productNumber)")
+    fun checkIfProductNumberExists(productNumber: String) : Boolean
 
     // I used a RawQuery here because Rooms do not take column names as parameters
     // Re: Instead of RawQuery, I just used a normal query, have the list be sorted in memory
