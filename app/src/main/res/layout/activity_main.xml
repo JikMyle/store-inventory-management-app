@@ -6,13 +6,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <androidx.fragment.app.FragmentContainerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/fragment_container_view"
-            android:name="com.mobile_programming.sari_sari_inventory_app.ui.scanner.StockUpScreenFragment" />
+            android:name="com.mobile_programming.sari_sari_inventory_app.ui.scanner.StockUpScannerScreenFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

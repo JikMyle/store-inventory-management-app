@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import com.mobile_programming.sari_sari_inventory_app.MainActivity
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.databinding.FragmentReceiptScannerBinding
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
