@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
     tableName = "Products",
     indices = [
         Index(value = ["productNumber"], unique = true),
-        Index(value = ["productName"], unique = true)
     ]
 )
 data class Product(
