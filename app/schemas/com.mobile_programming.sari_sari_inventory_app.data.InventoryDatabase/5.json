@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "cab53960229c35a80dde5bde8a107361",
+    "identityHash": "a034d0e01d9cf9475b9787ad9cd4d2bc",
     "entities": [
       {
         "tableName": "Products",
@@ -54,22 +54,13 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productNumber` ON `${TABLE_NAME}` (`productNumber`)"
-          },
-          {
-            "name": "index_Products_productName",
-            "unique": true,
-            "columnNames": [
-              "productName"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productName` ON `${TABLE_NAME}` (`productName`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "Receipts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateCreated` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateCreated` TEXT NOT NULL, `total` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -81,6 +72,12 @@
             "fieldPath": "dateCreated",
             "columnName": "dateCreated",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "total",
+            "columnName": "total",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -95,8 +92,14 @@
       },
       {
         "tableName": "ProductsPerReceipt",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` INTEGER NOT NULL, `receiptId` INTEGER NOT NULL, `amount` INTEGER NOT NULL, PRIMARY KEY(`productId`, `receiptId`), FOREIGN KEY(`receiptId`) REFERENCES `Receipts`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`productId`) REFERENCES `Products`(`id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `receiptId` INTEGER NOT NULL, `amount` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`receiptId`) REFERENCES `Receipts`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "productId",
             "columnName": "productId",
@@ -119,11 +122,21 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "productId",
-            "receiptId"
+            "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ProductsPerReceipt_productId_receiptId",
+            "unique": false,
+            "columnNames": [
+              "productId",
+              "receiptId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProductsPerReceipt_productId_receiptId` ON `${TABLE_NAME}` (`productId`, `receiptId`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "Receipts",
@@ -135,17 +148,6 @@
             "referencedColumns": [
               "id"
             ]
-          },
-          {
-            "table": "Products",
-            "onDelete": "NO ACTION",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "productId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
           }
         ]
       }
@@ -153,7 +155,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cab53960229c35a80dde5bde8a107361')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a034d0e01d9cf9475b9787ad9cd4d2bc')"
     ]
   }
 }

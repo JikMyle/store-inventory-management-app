@@ -46,42 +46,48 @@ class ProductTableTest {
                 productNumber = "123456789",
                 productName = "Ice Cream",
                 price = 250.0,
-                stock = 60
+                stock = 60,
+                imageUri = null
             ),
             Product(
                 id = 2,
                 productNumber = "987654321",
                 productName = "Juice",
                 price = 650.0,
-                stock = 20
+                stock = 20,
+                imageUri = null
             ),
             Product(
                 id = 3,
                 productNumber = "111222333",
                 productName = "Jelly",
                 price = 20.0,
-                stock = 105
+                stock = 105,
+                imageUri = null
             ),
             Product(
                 id = 4,
                 productNumber = "102223334",
                 productName = "Cool Juice",
                 price = 35.0,
-                stock = 45
+                stock = 45,
+                imageUri = null
             ),
             Product(
                 id = 5,
                 productNumber = "222103334",
                 productName = "Juice That's Hot",
                 price = 80.0,
-                stock = 10
+                stock = 10,
+                imageUri = null
             ),
             Product(
                 id = 6,
                 productNumber = "222333410",
                 productName = "Mild Smoothie",
                 price = 90.0,
-                stock = 30
+                stock = 30,
+                imageUri = null
             ),
         )
 
@@ -100,7 +106,8 @@ class ProductTableTest {
             productNumber = "123456789",
             productName = "Ice Cream",
             price = 250.0,
-            stock = 60
+            stock = 60,
+            imageUri = null
         )
 
         productDao.insertProduct(product)
@@ -145,14 +152,14 @@ class ProductTableTest {
 
         assertEquals(
             filteredByProductNumber,
-            productDao.getProduct(productNumberToFind)
+            productDao.searchForProduct(productNumberToFind)
                 .filterNotNull()
                 .first()
         )
 
         assertEquals(
             filteredByProductName,
-            productDao.getProduct(productNameToFind)
+            productDao.searchForProduct(productNameToFind)
                 .filterNotNull()
                 .first()
         )
@@ -173,7 +180,7 @@ class ProductTableTest {
         val incorrectName = "!@#naksdjak!!@#bad"
         val incorrectNumber = "131314215315535151"
 
-        assertTrue(productDao.getProduct(incorrectName).filterNotNull().first().isEmpty())
-        assertTrue(productDao.getProduct(incorrectNumber).filterNotNull().first().isEmpty())
+        assertTrue(productDao.searchForProduct(incorrectName).filterNotNull().first().isEmpty())
+        assertTrue(productDao.searchForProduct(incorrectNumber).filterNotNull().first().isEmpty())
     }
 }

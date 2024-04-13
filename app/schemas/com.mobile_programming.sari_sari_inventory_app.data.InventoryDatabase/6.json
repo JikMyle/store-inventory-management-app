@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "931cfbc04b807574264d97f7fa6680ad",
+    "identityHash": "f6c7afd4b6ed2d8e2663497a42c38a6f",
     "entities": [
       {
         "tableName": "Products",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `productNumber` TEXT, `productName` TEXT NOT NULL, `price` REAL NOT NULL, `stock` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `productNumber` TEXT, `productName` TEXT NOT NULL, `price` REAL NOT NULL, `stock` INTEGER NOT NULL, `imageUri` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -37,6 +37,12 @@
             "columnName": "stock",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "imageUri",
+            "columnName": "imageUri",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -54,15 +60,6 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productNumber` ON `${TABLE_NAME}` (`productNumber`)"
-          },
-          {
-            "name": "index_Products_productName",
-            "unique": true,
-            "columnNames": [
-              "productName"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productName` ON `${TABLE_NAME}` (`productName`)"
           }
         ],
         "foreignKeys": []
@@ -164,7 +161,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '931cfbc04b807574264d97f7fa6680ad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f6c7afd4b6ed2d8e2663497a42c38a6f')"
     ]
   }
 }

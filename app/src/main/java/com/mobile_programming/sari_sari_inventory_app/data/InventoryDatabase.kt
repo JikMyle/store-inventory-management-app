@@ -19,7 +19,7 @@ import kotlinx.coroutines.internal.synchronized
         Receipt::class,
         ProductsPerReceipt::class
     ],
-    version = 4,
+    version = 6,
 )
 @TypeConverters(DateStringTypeConverter::class)
 abstract class InventoryDatabase : RoomDatabase() {
@@ -36,6 +36,8 @@ abstract class InventoryDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context, InventoryDatabase::class.java, "inventoryDatabase"
                 )
+                    .createFromAsset("database/inventoryDatabase.db")
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }

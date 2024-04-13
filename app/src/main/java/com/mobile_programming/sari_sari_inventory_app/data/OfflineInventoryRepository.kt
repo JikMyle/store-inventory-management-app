@@ -33,8 +33,16 @@ class OfflineInventoryRepository(
         return productDao.getProduct(id)
     }
 
-    override fun getProduct(nameOrNumber: String): Flow<List<Product>> {
-        return productDao.getProduct(nameOrNumber)
+    override fun getProductByNumber(productNumber: String): Flow<Product?> {
+        return productDao.getProductByNumber(productNumber)
+    }
+
+    override fun searchForProduct(nameOrNumber: String): Flow<List<Product>> {
+        return productDao.searchForProduct(nameOrNumber)
+    }
+
+    override fun checkIfProductNumberExists(productNumber: String): Boolean {
+        return productDao.checkIfProductNumberExists(productNumber)
     }
 
     override suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long {

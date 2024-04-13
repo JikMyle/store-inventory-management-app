@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "931cfbc04b807574264d97f7fa6680ad",
+    "identityHash": "a034d0e01d9cf9475b9787ad9cd4d2bc",
     "entities": [
       {
         "tableName": "Products",
@@ -54,15 +54,6 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productNumber` ON `${TABLE_NAME}` (`productNumber`)"
-          },
-          {
-            "name": "index_Products_productName",
-            "unique": true,
-            "columnNames": [
-              "productName"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Products_productName` ON `${TABLE_NAME}` (`productName`)"
           }
         ],
         "foreignKeys": []
@@ -164,7 +155,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '931cfbc04b807574264d97f7fa6680ad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a034d0e01d9cf9475b9787ad9cd4d2bc')"
     ]
   }
 }
