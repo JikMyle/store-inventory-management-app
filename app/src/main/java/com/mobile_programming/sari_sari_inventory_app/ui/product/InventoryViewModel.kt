@@ -84,10 +84,8 @@ class InventoryViewModel(
             .first()
     }
 
-    fun deleteProduct(product: Product) {
-        viewModelScope.launch {
-            inventoryRepository.deleteProduct(product)
-        }
+    suspend fun deleteProduct(product: Product) {
+        inventoryRepository.deleteProduct(product)
     }
 
     fun changeSortingType(sortingType: SortingType, ascending: Boolean) {

@@ -90,19 +90,29 @@ class ProductDetailsViewModel(
 
                 _uiState.update {
                     it.copy(
-                        detailsErrorMap = errorMap
+                        detailsErrorMap = errorMap,
+                        isInputValid = false
                     )
                 }
             }
         }
     }
 
-    fun updateProduct(productDetails: ProductDetails) {
+    private fun hasErrors(
+        errorMap: Map<String, TextInputErrorType?>
+    ): Boolean {
+
+        errorMap.values.forEach {
+            if (it != null) return false
+        }
+
+        return true
+    }
+
+    suspend fun updateProduct(productDetails: ProductDetails) {
         if (productDetails == _uiState.value.productDetails) return
 
-        viewModelScope.launch(Dispatchers.IO) {
-            inventoryRepository.updateProduct(productDetails.toProduct())
-        }
+        inventoryRepository.updateProduct(productDetails.toProduct())
     }
 
     fun toggleEditingMode(isEditing: Boolean) {
@@ -120,9 +130,7 @@ class ProductDetailsViewModel(
     fun updateUiState(productDetails: ProductDetails) {
         if (_uiState.value.isEditing) {
             val errorMap = validateInput(productDetails)
-            var isInputValid = true
-
-            errorMap.values.forEach { if (it != null) isInputValid = false }
+            val isInputValid = hasErrors(errorMap)
 
             _uiState.update {
                 it.copy(
@@ -133,6 +141,10 @@ class ProductDetailsViewModel(
             }
         }
     }
+
+    suspend fun deleteProduct() {
+        inventoryRepository.deleteProduct(_uiState.value.productDetails.toProduct())
+    }
 }
 
 data class ProductDetailsUiState(
@@ -140,5 +152,5 @@ data class ProductDetailsUiState(
     val isEditing: Boolean = false,
     val isInputValid: Boolean = false,
     val tempDetails: ProductDetails = ProductDetails(),
-    val detailsErrorMap: Map<String, TextInputErrorType?> = mapOf()
+    val detailsErrorMap: Map<String, TextInputErrorType?> = mapOf(),
 )

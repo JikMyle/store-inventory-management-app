@@ -41,9 +41,7 @@ class ProductEntryViewModel(
 
     fun updateUiState(productDetails: ProductDetails) {
         val errorMap = validateInput(productDetails)
-        var isInputValid = true
-
-        errorMap.values.forEach { if(it != null) isInputValid = false }
+        val isInputValid = hasErrors(errorMap)
 
         _uiState.update {
             it.copy(
@@ -74,7 +72,7 @@ class ProductEntryViewModel(
 
     private fun validateInput(
         productDetails: ProductDetails = _uiState.value.productDetails
-    ) : Map<String, TextInputErrorType?> {
+    ): Map<String, TextInputErrorType?> {
         val errorMap = _uiState.value.detailsErrorMap.toMutableMap()
 
         checkIfProductNumberExists(productDetails.productNumber)
@@ -107,7 +105,7 @@ class ProductEntryViewModel(
     private fun checkIfProductNumberExists(
         productNumber: String
     ) {
-        if(productNumber.isEmpty()) return
+        if (productNumber.isEmpty()) return
 
         viewModelScope.launch(Dispatchers.IO) {
             if (inventoryRepository.checkIfProductNumberExists(productNumber)) {
@@ -116,17 +114,27 @@ class ProductEntryViewModel(
 
                 _uiState.update {
                     it.copy(
-                        detailsErrorMap = errorMap
+                        detailsErrorMap = errorMap,
+                        isInputValid = false
                     )
                 }
             }
         }
     }
 
-    fun insertProduct(productDetails: ProductDetails) {
-        viewModelScope.launch {
-            inventoryRepository.insertProduct(productDetails.toProduct())
+    private fun hasErrors(
+        errorMap: Map<String, TextInputErrorType?>
+    ): Boolean {
+
+        errorMap.values.forEach {
+            if (it != null) return false
         }
+
+        return true
+    }
+
+    suspend fun insertProduct(productDetails: ProductDetails) {
+        inventoryRepository.insertProduct(productDetails.toProduct())
     }
 }
 
