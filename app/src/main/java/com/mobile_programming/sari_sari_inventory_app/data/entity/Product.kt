@@ -16,4 +16,5 @@ data class Product(
     val productName: String,
     val price: Double,
     val stock: Int,
+    val imageUri: String?
 )

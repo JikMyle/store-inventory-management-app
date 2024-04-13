@@ -19,7 +19,7 @@ import kotlinx.coroutines.internal.synchronized
         Receipt::class,
         ProductsPerReceipt::class
     ],
-    version = 5,
+    version = 6,
 )
 @TypeConverters(DateStringTypeConverter::class)
 abstract class InventoryDatabase : RoomDatabase() {

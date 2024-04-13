@@ -378,14 +378,16 @@ fun BarcodeSearchResultListPreview() {
             productNumber = "123131312",
             productName = "Young's Town Sardines in Tomato Sauce w/ Hot Chili 155g",
             price = 75.0,
-            stock = 100
+            stock = 100,
+            imageUri = null
         ),
         Product(
             id = 0,
             productNumber = "123131312",
             productName = "Young's Town Sardines in Tomato Sauce w/ Hot Chili 155g",
             price = 175.0,
-            stock = 10
+            stock = 10,
+            imageUri = null
         )
     )
 

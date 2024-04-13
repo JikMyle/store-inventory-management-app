@@ -1,5 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.ui.product
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -141,6 +142,7 @@ data class ProductDetails(
     val productName: String = "",
     val price: String = "",
     val stock: String = "",
+    val imageUri: Uri? = null
 )
 
 fun ProductDetails.toProduct(): Product {
@@ -149,7 +151,8 @@ fun ProductDetails.toProduct(): Product {
         productNumber = productNumber,
         productName = productName,
         price = price.toDoubleOrNull() ?: 0.0,
-        stock = stock.toIntOrNull() ?: 0
+        stock = stock.toIntOrNull() ?: 0,
+        imageUri = imageUri?.toString()
     )
 }
 
@@ -159,7 +162,8 @@ fun Product.toProductDetails(): ProductDetails {
         productNumber = productNumber ?: "",
         productName = productName,
         price = price.toString(),
-        stock = stock.toString()
+        stock = stock.toString(),
+        imageUri = imageUri?.let { Uri.parse(it) }
     )
 }
 
