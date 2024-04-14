@@ -7,6 +7,7 @@ import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetails
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProduct
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductAmountBottomSheetState
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductWithAmount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,27 @@ class ReceiptViewModel(
     private var _uiState = MutableStateFlow(ReceiptUiState())
     val uiState: StateFlow<ReceiptUiState> = _uiState.asStateFlow()
 
+    init {
+        val bottomSheetState = ProductAmountBottomSheetState(
+            onDismissRequest = { toggleBottomSheet(isVisible = false) },
+            onValueChange = {
+                updateProductWithAmount(
+                    amount = it.toIntOrNull() ?: 0
+                )
+            },
+            onConfirmClick = suspend {
+                updateProductAmount(_uiState.value.bottomSheetState.productWithAmount)
+                toggleBottomSheet(isVisible = false)
+            }
+        )
+
+        _uiState.update {
+            it.copy(
+                bottomSheetState = bottomSheetState
+            )
+        }
+    }
+
     fun addProductToReceipt(productWithAmount: ProductWithAmount) {
         val receiptMap = _uiState.value.receiptMap.toMutableMap()
         val productDetails = productWithAmount.productDetails
@@ -31,7 +53,7 @@ class ReceiptViewModel(
         if (amount == 0) {
             return
         } else {
-            receiptMap[productDetails] = (receiptMap[productDetails] ?: 0) + amount
+            receiptMap[productDetails] = amount
         }
 
         val total = getReceiptTotal(receiptMap)
@@ -111,9 +133,68 @@ class ReceiptViewModel(
             ReceiptUiState()
         }
     }
+
+    fun toggleBottomSheet(
+        productWithAmount: ProductWithAmount = _uiState.value.bottomSheetState.productWithAmount,
+        isVisible: Boolean
+    ) {
+        _uiState.update {
+            it.copy(
+                bottomSheetState = it.bottomSheetState.copy(
+                    productWithAmount = productWithAmount,
+                    isShowing = isVisible
+                )
+            )
+        }
+    }
+
+    private fun updateProductAmount(productWithAmount: ProductWithAmount) {
+        val receiptMap = _uiState.value.receiptMap.toMutableMap()
+
+        if (!receiptMap.containsKey(productWithAmount.productDetails)) return
+
+        receiptMap[productWithAmount.productDetails] = productWithAmount.amount
+
+        _uiState.update {
+            it.copy(
+                receiptMap = receiptMap
+            )
+        }
+    }
+
+    private fun updateProductWithAmount(
+        productDetails: ProductDetails =
+            _uiState.value.bottomSheetState.productWithAmount.productDetails,
+        amount: Int = 0
+    ) {
+        val bottomSheetState = _uiState.value.bottomSheetState
+        val productWithAmount = bottomSheetState.productWithAmount.copy(
+            productDetails = productDetails,
+            amount = amount,
+        )
+
+        val newBottomSheetState = bottomSheetState.copy(
+            productWithAmount = productWithAmount,
+            isInputValid = validateInput(productWithAmount)
+        )
+
+        _uiState.update {
+            it.copy(
+                bottomSheetState = newBottomSheetState
+            )
+        }
+    }
+
+    private fun validateInput(productWithAmount: ProductWithAmount) : Boolean {
+        val productStock = productWithAmount.productDetails.stock.toIntOrNull() ?: 0
+        val amount = productWithAmount.amount
+
+        return amount != 0 && amount <= productStock
+    }
 }
 
 data class ReceiptUiState(
+    val bottomSheetState: ProductAmountBottomSheetState = ProductAmountBottomSheetState(),
     val receiptMap: Map<ProductDetails, Int> = mapOf(),
     val total: Double = 0.0
 )

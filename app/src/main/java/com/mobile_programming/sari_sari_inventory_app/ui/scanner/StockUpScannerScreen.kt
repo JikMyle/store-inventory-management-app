@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
@@ -60,8 +61,6 @@ fun StockUpScannerScreen(
     navigateToProductEntry: (String) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     StockUpScannerBody(
         uiState = uiState,
@@ -71,25 +70,6 @@ fun StockUpScannerScreen(
             )
             viewModel.toggleBottomSheet(true)
             viewModel.toggleSearchBar(false)
-        },
-        onBottomSheetDismiss = {
-            viewModel.toggleBottomSheet(false)
-        },
-        onBottomSheetValueChange = {
-            viewModel.updateProductWithAmount(
-                amount = it.toIntOrNull() ?: 0
-            )
-        },
-        onBottomSheetButtonClick = {
-            scope.launch {
-                viewModel.increaseProductStock()
-                viewModel.toggleBottomSheet(false)
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.product_stock_updated),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         },
         onDialogDismiss = viewModel::clearBarcodeScanned,
         navigateToProductEntry = navigateToProductEntry,
@@ -103,9 +83,6 @@ fun StockUpScannerBody(
     modifier: Modifier = Modifier,
     uiState: State<ScannerUiState>,
     onResultClick: (Product) -> Unit,
-    onBottomSheetDismiss: () -> Unit,
-    onBottomSheetValueChange: (String) -> Unit,
-    onBottomSheetButtonClick: () -> Unit,
     onDialogDismiss: () -> Unit,
     navigateToProductEntry: (String) -> Unit,
 ) {
@@ -149,14 +126,10 @@ fun StockUpScannerBody(
             )
         }
 
-        if (uiState.value.isBottomSheetVisible) {
+        if (uiState.value.bottomSheetState.isShowing) {
             StockUpBottomSheet(
-                productWithAmount = uiState.value.productWithAmount,
                 sheetState = sheetState,
-                onDismissRequest = onBottomSheetDismiss,
-                onValueChange = onBottomSheetValueChange,
-                onButtonClick = onBottomSheetButtonClick,
-                isInputValid = uiState.value.isInputValid
+                bottomSheetState = uiState.value.bottomSheetState
             )
         }
 
@@ -175,15 +148,14 @@ fun StockUpScannerBody(
 @Composable
 fun StockUpBottomSheet(
     modifier: Modifier = Modifier,
-    productWithAmount: ProductWithAmount,
     sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    onValueChange: (String) -> Unit,
-    onButtonClick: () -> Unit,
-    isInputValid: Boolean,
+    bottomSheetState: ProductAmountBottomSheetState,
 ) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     ModalBottomSheet(
-        onDismissRequest = { onDismissRequest() },
+        onDismissRequest = { bottomSheetState.onDismissRequest() },
         sheetState = sheetState,
         windowInsets = WindowInsets.ime,
         modifier = modifier
@@ -201,7 +173,7 @@ fun StockUpBottomSheet(
             ) {
                 BottomSheetProductDetailsRow(
                     labelResId = R.string.product_number,
-                    productDetail = productWithAmount.productDetails.productNumber,
+                    productDetail = bottomSheetState.productWithAmount.productDetails.productNumber,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -213,7 +185,7 @@ fun StockUpBottomSheet(
 
                 BottomSheetProductDetailsRow(
                     labelResId = R.string.product_name,
-                    productDetail = productWithAmount.productDetails.productName,
+                    productDetail = bottomSheetState.productWithAmount.productDetails.productName,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -236,7 +208,7 @@ fun StockUpBottomSheet(
             ) {
                 BottomSheetProductDetailsRow(
                     labelResId = R.string.product_stock,
-                    productDetail = productWithAmount.productDetails.stock,
+                    productDetail = bottomSheetState.productWithAmount.productDetails.stock,
                 )
 
                 Icon(
@@ -250,8 +222,8 @@ fun StockUpBottomSheet(
                 )
 
                 OutlinedTextField(
-                    value = productWithAmount.amount.toString(),
-                    onValueChange = { onValueChange(it) },
+                    value = bottomSheetState.productWithAmount.amount.toString(),
+                    onValueChange = { bottomSheetState.onValueChange(it) },
                     label = {
                         Text(
                             stringResource(
@@ -270,8 +242,17 @@ fun StockUpBottomSheet(
             }
 
             Button(
-                onClick = onButtonClick,
-                enabled = isInputValid,
+                onClick = {
+                    scope.launch {
+                        bottomSheetState.onConfirmClick()
+                        Toast.makeText(
+                            context,
+                            getString(context, R.string.product_stock_updated),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                enabled = bottomSheetState.isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
