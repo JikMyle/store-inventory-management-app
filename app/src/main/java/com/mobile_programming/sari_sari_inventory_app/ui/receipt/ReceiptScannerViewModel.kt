@@ -7,6 +7,7 @@ import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetails
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScannerViewModel
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductAmountBottomSheetState
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductWithAmount
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ScannerCameraState
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ScannerUiState
@@ -36,10 +37,21 @@ class ReceiptScannerViewModel(
             onActiveChange = ::toggleSearchBar
         )
 
+        val bottomSheetState = ProductAmountBottomSheetState(
+            onDismissRequest = { toggleBottomSheet(false) },
+            onValueChange = {
+                updateProductWithAmount(
+                    amount = it.toIntOrNull() ?: 0
+                )
+            },
+            onConfirmClick = { toggleBottomSheet(false) }
+        )
+
         _uiState.update {
             it.copy(
                 scannerCameraState = scannerCameraState,
-                searchBarState = searchBarState
+                searchBarState = searchBarState,
+                bottomSheetState = bottomSheetState
             )
         }
     }
@@ -96,7 +108,9 @@ class ReceiptScannerViewModel(
             it.copy(
                 scannedBarcode = "",
                 isNewProduct = false,
-                productWithAmount = ProductWithAmount()
+                bottomSheetState = it.bottomSheetState.copy(
+                    productWithAmount = ProductWithAmount()
+                )
             )
         }
     }
@@ -120,7 +134,11 @@ class ReceiptScannerViewModel(
 
     fun toggleBottomSheet(isVisible: Boolean) {
         _uiState.update {
-            it.copy(isBottomSheetVisible = isVisible)
+            it.copy(
+                bottomSheetState = it.bottomSheetState.copy(
+                    isShowing = isVisible
+                )
+            )
         }
 
         if (!isVisible) {
@@ -159,18 +177,24 @@ class ReceiptScannerViewModel(
     }
 
     fun updateProductWithAmount(
-        productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
+        productDetails: ProductDetails =
+            _uiState.value.bottomSheetState.productWithAmount.productDetails,
         amount: Int = 0
     ) {
-        val productWithAmount = _uiState.value.productWithAmount.copy(
+        val bottomSheetState = _uiState.value.bottomSheetState
+        val productWithAmount = bottomSheetState.productWithAmount.copy(
             productDetails = productDetails,
             amount = amount,
         )
 
+        val newBottomSheetState = bottomSheetState.copy(
+            productWithAmount = productWithAmount,
+            isInputValid = validateInput(productWithAmount)
+        )
+
         _uiState.update {
             it.copy(
-                productWithAmount = productWithAmount,
-                isInputValid = validateInput(productWithAmount)
+                bottomSheetState = newBottomSheetState
             )
         }
     }

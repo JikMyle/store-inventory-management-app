@@ -35,6 +35,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
@@ -46,6 +47,7 @@ import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScanner
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScannerSearchBar
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BottomSheetProductDetailsRow
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.NewProductDialog
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductAmountBottomSheetState
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductWithAmount
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ScannerUiState
 import kotlinx.coroutines.launch
@@ -58,8 +60,6 @@ fun ReceiptScannerScreen(
     navigateToProductEntry: (String) -> Unit,
 ) {
     val uiState = scannerViewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     ReceiptScannerBody(
         uiState = uiState,
@@ -70,27 +70,7 @@ fun ReceiptScannerScreen(
             scannerViewModel.toggleBottomSheet(true)
             scannerViewModel.toggleSearchBar(false)
         },
-        onBottomSheetDismiss = {
-            scannerViewModel.toggleBottomSheet(false)
-        },
-        onBottomSheetValueChange = {
-            scannerViewModel.updateProductWithAmount(
-                amount = it.toIntOrNull() ?: 0
-            )
-        },
-        onBottomSheetButtonClick = {
-            scope.launch {
-                receiptViewModel.addProductToReceipt(
-                    uiState.value.productWithAmount
-                )
-                scannerViewModel.toggleBottomSheet(false)
-                Toast.makeText(
-                    context,
-                    "Product added to receipt!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        },
+        addToReceiptList = { receiptViewModel.addProductToReceipt(it) },
         onDialogDismiss = scannerViewModel::clearBarcodeScanned,
         navigateToProductEntry = navigateToProductEntry,
         modifier = modifier
@@ -102,10 +82,8 @@ fun ReceiptScannerScreen(
 fun ReceiptScannerBody(
     modifier: Modifier = Modifier,
     uiState: State<ScannerUiState>,
+    addToReceiptList: (ProductWithAmount) -> Unit,
     onResultClick: (Product) -> Unit,
-    onBottomSheetDismiss: () -> Unit,
-    onBottomSheetValueChange: (String) -> Unit,
-    onBottomSheetButtonClick: () -> Unit,
     onDialogDismiss: () -> Unit,
     navigateToProductEntry: (String) -> Unit,
 ) {
@@ -149,14 +127,11 @@ fun ReceiptScannerBody(
             )
         }
 
-        if (uiState.value.isBottomSheetVisible) {
+        if (uiState.value.bottomSheetState.isShowing) {
             ReceiptScannerBottomSheet(
-                productWithAmount = uiState.value.productWithAmount,
                 sheetState = sheetState,
-                onDismissRequest = onBottomSheetDismiss,
-                onValueChange = onBottomSheetValueChange,
-                onButtonClick = onBottomSheetButtonClick,
-                isInputValid = uiState.value.isInputValid
+                bottomSheetState = uiState.value.bottomSheetState,
+                addToReceiptList = addToReceiptList
             )
         }
 
@@ -177,15 +152,15 @@ fun ReceiptScannerBody(
 @Composable
 fun ReceiptScannerBottomSheet(
     modifier: Modifier = Modifier,
-    productWithAmount: ProductWithAmount,
     sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    onValueChange: (String) -> Unit,
-    onButtonClick: () -> Unit,
-    isInputValid: Boolean,
+    bottomSheetState: ProductAmountBottomSheetState,
+    addToReceiptList: (ProductWithAmount) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     ModalBottomSheet(
-        onDismissRequest = { onDismissRequest() },
+        onDismissRequest = { bottomSheetState.onDismissRequest() },
         sheetState = sheetState,
         windowInsets = WindowInsets.ime,
         modifier = modifier
@@ -206,13 +181,15 @@ fun ReceiptScannerBottomSheet(
             ) {
                 BottomSheetProductDetailsRow(
                     labelResId = R.string.product_number,
-                    productDetail = productWithAmount.productDetails.productNumber,
+                    productDetail = bottomSheetState.productWithAmount
+                        .productDetails.productNumber,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 BottomSheetProductDetailsRow(
                     labelResId = R.string.product_name,
-                    productDetail = productWithAmount.productDetails.productName,
+                    productDetail = bottomSheetState.productWithAmount
+                        .productDetails.productName,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -224,21 +201,23 @@ fun ReceiptScannerBottomSheet(
                 ) {
                     BottomSheetProductDetailsRow(
                         labelResId = R.string.product_price,
-                        productDetail = productWithAmount.productDetails
+                        productDetail = bottomSheetState.productWithAmount
+                            .productDetails
                             .toProduct()
                             .formattedPrice()
                     )
 
                     BottomSheetProductDetailsRow(
                         labelResId = R.string.product_stock,
-                        productDetail = productWithAmount.productDetails.stock,
+                        productDetail = bottomSheetState.productWithAmount
+                            .productDetails.stock,
                     )
                 }
             }
 
             OutlinedTextField(
-                value = productWithAmount.amount.toString(),
-                onValueChange = { onValueChange(it) },
+                value = bottomSheetState.productWithAmount.amount.toString(),
+                onValueChange = { bottomSheetState.onValueChange(it) },
                 label = {
                     Text(
                         stringResource(
@@ -256,8 +235,21 @@ fun ReceiptScannerBottomSheet(
             )
 
             Button(
-                onClick = onButtonClick,
-                enabled = isInputValid,
+                onClick = {
+                    scope.launch {
+                        addToReceiptList(
+                            bottomSheetState.productWithAmount
+                        )
+
+                        bottomSheetState.onConfirmClick()
+                        Toast.makeText(
+                            context,
+                            getString(context, R.string.product_added_to_receipt),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                enabled = bottomSheetState.isInputValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

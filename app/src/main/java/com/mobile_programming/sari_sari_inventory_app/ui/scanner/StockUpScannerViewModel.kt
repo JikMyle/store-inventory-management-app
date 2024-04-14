@@ -32,10 +32,24 @@ class StockUpScannerViewModel(
             onActiveChange = ::toggleSearchBar
         )
 
+        val bottomSheetState = ProductAmountBottomSheetState(
+            onDismissRequest = { toggleBottomSheet(false) },
+            onValueChange = {
+                updateProductWithAmount(
+                    amount = it.toIntOrNull() ?: 0
+                )
+            },
+            onConfirmClick = suspend {
+                increaseProductStock()
+                toggleBottomSheet(false)
+            }
+        )
+
         _uiState.update {
             it.copy(
                 scannerCameraState = scannerCameraState,
-                searchBarState = searchBarState
+                searchBarState = searchBarState,
+                bottomSheetState = bottomSheetState
             )
         }
     }
@@ -86,12 +100,15 @@ class StockUpScannerViewModel(
             }
         }
     }
+
     fun clearBarcodeScanned() {
         _uiState.update {
             it.copy(
                 scannedBarcode = "",
                 isNewProduct = false,
-                productWithAmount = ProductWithAmount()
+                bottomSheetState = it.bottomSheetState.copy(
+                    productWithAmount = ProductWithAmount()
+                )
             )
         }
     }
@@ -115,7 +132,11 @@ class StockUpScannerViewModel(
 
     fun toggleBottomSheet(isVisible: Boolean) {
         _uiState.update {
-            it.copy(isBottomSheetVisible = isVisible)
+            it.copy(
+                bottomSheetState = it.bottomSheetState.copy(
+                    isShowing = isVisible
+                )
+            )
         }
 
         if (!isVisible) {
@@ -154,25 +175,31 @@ class StockUpScannerViewModel(
     }
 
     fun updateProductWithAmount(
-        productDetails: ProductDetails = _uiState.value.productWithAmount.productDetails,
+        productDetails: ProductDetails =
+            _uiState.value.bottomSheetState.productWithAmount.productDetails,
         amount: Int = 0
     ) {
-        val productWithAmount = _uiState.value.productWithAmount.copy(
+        val bottomSheetState = _uiState.value.bottomSheetState
+        val productWithAmount = bottomSheetState.productWithAmount.copy(
             productDetails = productDetails,
             amount = amount,
         )
 
+        val newBottomSheetState = bottomSheetState.copy(
+            productWithAmount = productWithAmount,
+            isInputValid = validateInput(productWithAmount)
+        )
+
         _uiState.update {
             it.copy(
-                productWithAmount = productWithAmount,
-                isInputValid = validateInput(productWithAmount)
+                bottomSheetState = newBottomSheetState
             )
         }
     }
 
-    suspend fun increaseProductStock() {
-        val amount = _uiState.value.productWithAmount.amount
-        val product = _uiState.value.productWithAmount.productDetails
+     private suspend fun increaseProductStock() {
+        val amount = _uiState.value.bottomSheetState.productWithAmount.amount
+        val product = _uiState.value.bottomSheetState.productWithAmount.productDetails
             .toProduct()
 
         inventoryRepository.updateProduct(
@@ -180,20 +207,23 @@ class StockUpScannerViewModel(
         )
     }
 
-    private fun validateInput(productWithAmount: ProductWithAmount) : Boolean {
+    private fun validateInput(productWithAmount: ProductWithAmount): Boolean {
         return productWithAmount.amount != 0
     }
 }
 
 data class ScannerUiState(
-    val scannerCameraState: ScannerCameraState = ScannerCameraState(),
-    val searchBarState: SearchBarState<Product> = SearchBarState(),
+    val scannerCameraState: ScannerCameraState =
+        ScannerCameraState(),
+
+    val searchBarState: SearchBarState<Product> =
+        SearchBarState(),
+
+    val bottomSheetState: ProductAmountBottomSheetState =
+        ProductAmountBottomSheetState(),
 
     val scannedBarcode: String = "",
     val isNewProduct: Boolean = false,
-    val isBottomSheetVisible: Boolean = false,
-    val isInputValid: Boolean = false,
-    val productWithAmount: ProductWithAmount = ProductWithAmount()
 )
 
 data class SearchBarState<T>(
@@ -208,4 +238,13 @@ data class SearchBarState<T>(
 data class ProductWithAmount(
     val productDetails: ProductDetails = ProductDetails(),
     val amount: Int = 0,
+)
+
+data class ProductAmountBottomSheetState(
+    val productWithAmount: ProductWithAmount = ProductWithAmount(),
+    val isShowing: Boolean = false,
+    val isInputValid: Boolean = false,
+    val onDismissRequest: () -> Unit = { },
+    val onValueChange: (String) -> Unit = { },
+    val onConfirmClick: suspend () -> Unit = { },
 )
