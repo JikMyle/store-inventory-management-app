@@ -49,7 +49,12 @@ class OfflineInventoryRepository(
         val id = receiptDao.insertReceipt(receipt)
 
         products.forEach {
-            receiptDao.insertProductToReceipt(it.key.id, id, it.value)
+            receiptDao.insertProductToReceipt(
+                productId = it.key.id,
+                receiptId = id,
+                amount = it.value,
+                totalRevenue = it.value * it.key.price
+            )
         }
 
         return id

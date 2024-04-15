@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "f6c7afd4b6ed2d8e2663497a42c38a6f",
+    "identityHash": "c5feba1f71bca0754b3fdceb48b56752",
     "entities": [
       {
         "tableName": "Products",
@@ -66,7 +66,7 @@
       },
       {
         "tableName": "Receipts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateCreated` TEXT NOT NULL, `total` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateCreated` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -78,12 +78,6 @@
             "fieldPath": "dateCreated",
             "columnName": "dateCreated",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "total",
-            "columnName": "total",
-            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -98,7 +92,7 @@
       },
       {
         "tableName": "ProductsPerReceipt",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `receiptId` INTEGER NOT NULL, `amount` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`receiptId`) REFERENCES `Receipts`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `receiptId` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `revenue` REAL NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`receiptId`) REFERENCES `Receipts`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -122,6 +116,12 @@
             "fieldPath": "amount",
             "columnName": "amount",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revenue",
+            "columnName": "revenue",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -161,7 +161,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f6c7afd4b6ed2d8e2663497a42c38a6f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c5feba1f71bca0754b3fdceb48b56752')"
     ]
   }
 }

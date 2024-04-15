@@ -10,7 +10,6 @@ import java.util.Date
 data class Receipt(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val dateCreated: Date,
-    val total: Double
 )
 
 

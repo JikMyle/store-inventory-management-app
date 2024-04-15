@@ -109,14 +109,10 @@ class ReceiptViewModel(
         val productsWithAmounts = receiptMap.mapKeys {
             it.key.toProduct()
         }
-        val total = productsWithAmounts.map {
-            it.key.price * it.value
-        }.sum()
 
         val receipt = Receipt(
             id = 0,
             dateCreated = Calendar.getInstance().time,
-            total = total
         )
 
         return inventoryRepository.insertReceipt(receipt, productsWithAmounts)

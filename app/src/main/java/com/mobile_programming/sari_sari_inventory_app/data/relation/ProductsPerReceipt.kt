@@ -39,6 +39,7 @@ data class ProductsPerReceipt(
     val productId: Long,
     val receiptId: Long,
     val amount: Int,
+    val revenue: Double,
 )
 
 data class RevenueOnDate(

@@ -29,10 +29,15 @@ interface ReceiptDao {
      * Attaches a product to the receipt via an associative entity
      */
     @Query(
-        "INSERT INTO productsperreceipt (productId, receiptID, amount) " +
-        "VALUES (:productId, :receiptId, :amount)"
+        "INSERT INTO productsperreceipt (productId, receiptID, amount, revenue) " +
+        "VALUES (:productId, :receiptId, :amount, :totalRevenue)"
     )
-    suspend fun insertProductToReceipt(productId: Long, receiptId: Long, amount: Int)
+    suspend fun insertProductToReceipt(
+        productId: Long,
+        receiptId: Long,
+        amount: Int,
+        totalRevenue: Double
+    )
 
     /**
      * Retrieves a list of ProductsPerReceipt objects containing the receipt Id.
@@ -40,17 +45,19 @@ interface ReceiptDao {
     @Query("SELECT * FROM productsperreceipt WHERE receiptId = :id")
     fun getListOfProducts(id: Long) : List<ProductsPerReceipt>
 
-    @Query("SELECT SUM(ppr.amount * p.price) FROM productsperreceipt ppr " +
-            "INNER JOIN products p ON ppr.productId = p.id " +
-            "WHERE ppr.receiptId = :id ")
+    @Query("SELECT SUM(revenue) " +
+            "FROM productsperreceipt " +
+            "WHERE receiptId = :id "
+    )
     fun getTotalCost(id: Long) : Double
 
-    @Query("SELECT r.dateCreated as date, SUM(ppr.amount * p.price) as totalRevenue " +
+    @Query(
+        "SELECT r.dateCreated as date, SUM(ppr.revenue) as totalRevenue " +
             "FROM receipts r " +
-            "INNER JOIN productsperreceipt ppr ON r.id = ppr.receiptId " +
-            "INNER JOIN products p ON ppr.productId = p.id " +
+            "INNER JOIN productsperreceipt ppr ON ppr.receiptId = r.id " +
             "WHERE r.dateCreated >= :dateFrom " +
             "AND r.dateCreated < :dateTo " +
-            "GROUP BY r.dateCreated")
+            "GROUP BY r.dateCreated"
+    )
     fun getRevenueFromDates(dateFrom: Date, dateTo: Date) : Flow<List<RevenueOnDate>>
 }

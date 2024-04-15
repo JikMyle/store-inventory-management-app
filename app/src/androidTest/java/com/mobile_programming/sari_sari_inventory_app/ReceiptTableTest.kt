@@ -107,35 +107,30 @@ class ReceiptTableTest {
             Receipt(
                 1,
                 Calendar.getInstance().time,
-                0.0
             ),
             Receipt(
                 2,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -30)
                 }.time,
-                0.0
             ),
             Receipt(
                 3,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, 15)
                 }.time,
-                0.0
             ),
             Receipt(
                 4,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -16)
                 }.time,
-                0.0
             ),
             Receipt(
                 5,
                 Calendar.getInstance().apply {
                     add(Calendar.DATE, -16)
                 }.time,
-                0.0
             ),
         )
 
@@ -154,7 +149,7 @@ class ReceiptTableTest {
 
         for(i in 0..2) {
             receiptDao.insertProductToReceipt(
-                products[i].id, receipts[0].id, 1
+                products[i].id, receipts[0].id, 1, products[i].price * 1
             )
         }
 
@@ -168,8 +163,19 @@ class ReceiptTableTest {
         val products = populateProductTable()
         val receipts = populateReceiptTable()
 
-        receiptDao.insertProductToReceipt(products[0].id, receipts[0].id, 2)
-        receiptDao.insertProductToReceipt(products[5].id, receipts[0].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[0].id,
+            2,
+            products[0].price * 2
+        )
+
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[0].id,
+            3,
+            products[5].price * 3
+        )
 
         val totalCost = (products[0].price * 2) + (products[5].price * 3)
         val totalCostQuery = receiptDao.getTotalCost(receipts[0].id)
@@ -184,18 +190,50 @@ class ReceiptTableTest {
         val receipts = populateReceiptTable()
 
         // Total Revenue: 600
-        receiptDao.insertProductToReceipt(products[0].id, receipts[0].id, 2)
-        receiptDao.insertProductToReceipt(products[2].id, receipts[0].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[0].id,
+            2,
+            products[0].price * 2
+        )
+
+        receiptDao.insertProductToReceipt(
+            products[2].id,
+            receipts[0].id,
+            3,
+            products[2].price * 3
+        )
 
         // Total Revenue: 820
-        receiptDao.insertProductToReceipt(products[0].id, receipts[1].id, 3)
-        receiptDao.insertProductToReceipt(products[3].id, receipts[1].id, 2)
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[1].id,
+            3,
+            products[0].price.times(3)
+        )
+
+        receiptDao.insertProductToReceipt(
+            products[3].id,
+            receipts[1].id,
+            2,
+            products[3].price.times(2)
+        )
 
         // Total Revenue: 270
-        receiptDao.insertProductToReceipt(products[5].id, receipts[3].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[3].id,
+            3,
+            products[5].price.times(3)
+        )
 
         // Total Revenue: 270
-        receiptDao.insertProductToReceipt(products[5].id, receipts[4].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[4].id,
+            3,
+            products[5].price.times(3)
+        )
 
         val totalRevenueLastMonth =
             (products[0].price * 3) + (products[3].price * 2) + (products[5].price * 6)
@@ -224,22 +262,62 @@ class ReceiptTableTest {
         val receipts = populateReceiptTable()
 
         // Total Revenue: 600
-        receiptDao.insertProductToReceipt(products[0].id, receipts[0].id, 2)
-        receiptDao.insertProductToReceipt(products[2].id, receipts[0].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[0].id,
+            2,
+            products[0].price.times(2)
+        )
+        receiptDao.insertProductToReceipt(
+            products[2].id,
+            receipts[0].id,
+            3,
+            products[2].price.times(3)
+        )
 
         // Total Revenue: 820
-        receiptDao.insertProductToReceipt(products[0].id, receipts[1].id, 3)
-        receiptDao.insertProductToReceipt(products[3].id, receipts[1].id, 2)
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[1].id,
+            3,
+            products[0].price.times(3)
+        )
+        receiptDao.insertProductToReceipt(
+            products[3].id,
+            receipts[1].id,
+            2,
+            products[3].price.times(2)
+        )
 
         // Total Revenue: 270
-        receiptDao.insertProductToReceipt(products[5].id, receipts[2].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[2].id,
+            3,
+            products[5].price.times(3)
+        )
 
         // Total Revenue: 270
-        receiptDao.insertProductToReceipt(products[5].id, receipts[3].id, 3)
-        receiptDao.insertProductToReceipt(products[0].id, receipts[3].id, 4)
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[3].id,
+            3,
+            products[5].price.times(3)
+        )
+        receiptDao.insertProductToReceipt(
+            products[0].id,
+            receipts[3].id,
+            4,
+            products[0].price.times(4)
+        )
 
         // Total Revenue: 270
-        receiptDao.insertProductToReceipt(products[5].id, receipts[4].id, 3)
+        receiptDao.insertProductToReceipt(
+            products[5].id,
+            receipts[4].id,
+            3,
+            products[5].price.times(3)
+        )
 
         val expectedResult = listOf(
             ProductSale(
