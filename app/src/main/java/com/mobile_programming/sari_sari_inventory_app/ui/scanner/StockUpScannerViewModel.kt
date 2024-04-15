@@ -21,7 +21,7 @@ class StockUpScannerViewModel(
     val uiState: StateFlow<ScannerUiState> = _uiState.asStateFlow()
 
     init {
-        val scannerCameraState = ScannerCameraState(
+        scannerCameraState = ScannerCameraState(
             onPermissionResult = ::onPermissionResult,
             onBarcodeScanned = ::onBarcodeScanned,
             switchCamera = ::switchCamera

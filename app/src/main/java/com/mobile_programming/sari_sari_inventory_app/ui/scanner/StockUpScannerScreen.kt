@@ -72,7 +72,10 @@ fun StockUpScannerScreen(
             viewModel.toggleSearchBar(false)
         },
         onDialogDismiss = viewModel::clearBarcodeScanned,
-        navigateToProductEntry = navigateToProductEntry,
+        navigateToProductEntry = {
+            navigateToProductEntry(it)
+            viewModel.clearBarcodeScanned()
+        },
         modifier = modifier
     )
 }

@@ -72,7 +72,10 @@ fun ReceiptScannerScreen(
         },
         addToReceiptList = { receiptViewModel.addProductToReceipt(it) },
         onDialogDismiss = scannerViewModel::clearBarcodeScanned,
-        navigateToProductEntry = navigateToProductEntry,
+        navigateToProductEntry = {
+            navigateToProductEntry(it)
+            scannerViewModel.clearBarcodeScanned()
+        },
         modifier = modifier
     )
 }

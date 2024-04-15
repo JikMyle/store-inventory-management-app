@@ -133,8 +133,8 @@ class ProductEntryViewModel(
         return true
     }
 
-    suspend fun insertProduct(productDetails: ProductDetails) {
-        inventoryRepository.insertProduct(productDetails.toProduct())
+    suspend fun insertProduct() {
+        inventoryRepository.insertProduct(_uiState.value.productDetails.toProduct())
     }
 }
 
