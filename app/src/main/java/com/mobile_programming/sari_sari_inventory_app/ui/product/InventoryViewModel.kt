@@ -107,7 +107,7 @@ class InventoryViewModel(
                         SortingType.ByProductNumber -> it.productNumber
                         SortingType.ByPrice -> it.price
                         SortingType.ByStock -> it.stock
-                        else -> it.productName
+                        else -> it.productName.lowercase()
                     }
                 }
             )
@@ -118,7 +118,7 @@ class InventoryViewModel(
                         SortingType.ByProductNumber -> it.productNumber
                         SortingType.ByPrice -> it.price
                         SortingType.ByStock -> it.stock
-                        else -> it.productName
+                        else -> it.productName.lowercase()
                     }
                 }
             )
