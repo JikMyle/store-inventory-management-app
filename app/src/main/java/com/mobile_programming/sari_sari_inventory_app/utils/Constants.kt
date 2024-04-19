@@ -7,6 +7,8 @@ enum class SortingType {
     ByProductNumber,
     ByPrice,
     ByStock,
+    ByRevenue,
+    ByNumberSold
 }
 
 enum class TextInputErrorType(val stringResourceId: Int) {

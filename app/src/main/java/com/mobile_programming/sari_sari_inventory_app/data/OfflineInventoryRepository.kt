@@ -45,6 +45,14 @@ class OfflineInventoryRepository(
         return productDao.checkIfProductNumberExists(productNumber)
     }
 
+    override fun countOutOfStock(): Flow<Int> {
+        return productDao.countOutOfStock()
+    }
+
+    override fun countLowOnStock(max: Int): Flow<Int> {
+        return productDao.countLowOnStock(max)
+    }
+
     override suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long {
         val id = receiptDao.insertReceipt(receipt)
 

@@ -50,4 +50,15 @@ interface ProductDao {
             "AND ifnull(ppr.productId = :id, 1) " +
             "GROUP BY ppr.productId")
     fun getSalesFromDates(id: Long?, dateFrom: Date, dateTo: Date) : Flow<List<ProductSale>>
+
+    @Query("SELECT COUNT(*) " +
+            "FROM products " +
+            "WHERE stock = 0")
+    fun countOutOfStock() : Flow<Int>
+
+    @Query("SELECT COUNT(*) " +
+            "FROM products " +
+            "WHERE stock = :max " +
+            "AND stock > 0 ")
+    fun countLowOnStock(max: Int) : Flow<Int>
 }

@@ -25,6 +25,10 @@ interface InventoryRepository {
 
     fun checkIfProductNumberExists(productNumber: String) : Boolean
 
+    fun countOutOfStock() : Flow<Int>
+
+    fun countLowOnStock(max: Int) : Flow<Int>
+
     // Receipt Functions
     suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long
 
