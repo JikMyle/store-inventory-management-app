@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.devtools.ksp")
     id("androidx.room")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -62,6 +63,10 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
+
+    // View Navigation Dependencies
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // I'll probably remove some of these when we use Views
     // Compose Dependencies
