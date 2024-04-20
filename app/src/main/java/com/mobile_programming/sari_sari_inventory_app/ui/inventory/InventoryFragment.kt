@@ -43,7 +43,11 @@ class InventoryFragment : Fragment() {
 
         val adapter = InventoryListAdapter(
             onItemClick = { productId ->
-
+                navController.navigate(
+                    InventoryFragmentDirections.inventoryToProductDetails(
+                        productId
+                    )
+                )
             },
             onDeleteClick = { product ->
                 lifecycleScope.launch {
@@ -90,7 +94,11 @@ class InventoryFragment : Fragment() {
             }
         }
 
-
+        binding.addProductFAB.setOnClickListener {
+            navController.navigate(
+                InventoryFragmentDirections.inventoryToStockUpScanner()
+            )
+        }
 
         return binding.root
     }

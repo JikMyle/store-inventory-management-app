@@ -72,6 +72,10 @@ class InventoryListAdapter(
 
             binding.productPrice.text = product.formattedPrice()
 
+            binding.deleteButton.contentDescription = context.getString(
+                R.string.delete_product_content_desc,
+                productDetails.productName
+            )
             binding.deleteButton.setOnClickListener {
                 onDeleteClick(product)
             }
@@ -81,7 +85,6 @@ class InventoryListAdapter(
             }
         }
     }
-
 
 
 }

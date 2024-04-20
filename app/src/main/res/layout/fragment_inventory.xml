@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.mobile_programming.sari_sari_inventory_app.ui.inventory.InventoryViewModel" />
@@ -34,6 +35,8 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <!-- Search bar uses TextInputLayout instead of SearchBar -->
+            <!-- Since we don't need to use a SearchView -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/searchBar"
                 style="?attr/textInputOutlinedStyle"
@@ -62,9 +65,9 @@
                     android:hint="@string/inventory_search_hint"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:text="@{viewModel.uiState.searchBarState.searchQuery}"
                     android:paddingStart="40dp"
                     android:paddingEnd="@dimen/padding_medium"
+                    android:text="@{viewModel.uiState.searchBarState.searchQuery}"
                     android:textAppearance="@style/TextAppearance.Material3.SearchBar" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -77,13 +80,13 @@
                 android:layout_marginEnd="@dimen/padding_large"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                android:contentDescription="@string/delete"
+                android:contentDescription="@string/sort_menu_content_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/baseline_sort_24"
-                app:layout_constraintTop_toTopOf="@id/searchBar"
                 app:layout_constraintBottom_toBottomOf="@id/searchBar"
-                app:layout_constraintStart_toEndOf="@id/searchBar"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/searchBar"
+                app:layout_constraintTop_toTopOf="@id/searchBar"
                 app:tint="?attr/colorOnSurface" />
 
 
@@ -100,17 +103,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Floating Action Button -->
-        <!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--            android:id="@+id/fab"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="16dp"-->
-        <!--            android:src=""-->
-        <!--            app:layout_anchor="@id/recyclerView"-->
-        <!--            app:layout_anchorGravity="bottom|end"-->
-        <!--            android:contentDescription="" />-->
-
         <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -119,6 +111,19 @@
             android:layout_gravity="bottom"
             app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
             app:menu="@menu/bottom_navigation_menu" />
+
+        <!-- Floating Action Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addProductFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/bottom_navigation_height"
+            android:layout_marginEnd="@dimen/padding_medium"
+            android:layout_marginBottom="@dimen/fab_bottom_margin"
+            android:contentDescription="@string/new_product_fab_content_desc"
+            app:srcCompat="@drawable/baseline_add_24"
+            app:layout_anchor="@id/bottom_navigation"
+            app:layout_anchorGravity="top|end"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
