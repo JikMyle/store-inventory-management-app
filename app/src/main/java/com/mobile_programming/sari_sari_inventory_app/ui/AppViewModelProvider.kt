@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mobile_programming.sari_sari_inventory_app.InventoryApplication
-import com.mobile_programming.sari_sari_inventory_app.ui.product.InventoryViewModel
+import com.mobile_programming.sari_sari_inventory_app.ui.inventory.InventoryViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetailsViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductEntryViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptScannerViewModel

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/inventoryFragment">
+    <fragment
+        android:id="@+id/receiptScreenFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptScreenFragment"
+        android:label="ReceiptScreenFragment" >
+        <action
+            android:id="@+id/action_receiptScreenFragment2_to_receiptScannerScreenFragment2"
+            app:destination="@id/receiptScannerScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/receiptScannerScreenFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptScannerScreenFragment"
+        android:label="ReceiptScannerScreenFragment" >
+        <action
+            android:id="@+id/action_receiptScannerScreenFragment2_to_productEntryFragment"
+            app:destination="@id/productEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/stockUpScannerScreenFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.scanner.StockUpScannerScreenFragment"
+        android:label="StockUpScannerScreenFragment" >
+        <action
+            android:id="@+id/action_stockUpScannerScreenFragment_to_productEntryFragment"
+            app:destination="@id/productEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productEntryFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.product.ProductEntryFragment"
+        android:label="ProductEntryFragment" >
+        <argument
+            android:name="productNumber"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.inventory.InventoryFragment"
+        android:label="InventoryFragment" >
+        <action
+            android:id="@+id/inventoryToProductDetails"
+            app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/inventoryToStockUpScanner"
+            app:destination="@id/stockUpScannerScreenFragment" />
+        <action
+            android:id="@+id/action_inventoryFragment_to_receiptScreenFragment2"
+            app:destination="@id/receiptScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetailsFragment"
+        android:label="ProductDetailsFragment" >
+        <argument
+            android:name="productId"
+            app:argType="long" />
+    </fragment>
+</navigation>
