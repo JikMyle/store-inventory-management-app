@@ -16,5 +16,8 @@
     <dimen name="icon_button_large">36dp</dimen>
 
     <dimen name="max_text_field_width">488dp</dimen>
-    <dimen name="fab_bottom_margin">88dp</dimen>
+    <dimen name="fab_bottom_app_bar_vert_margin">42dp</dimen>
+
+    <dimen name="inventory_item_image_width">64dp</dimen>
+    <dimen name="inventory_item_card_height">72dp</dimen>
 </resources>

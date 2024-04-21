@@ -12,7 +12,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/inventory_item_card_height"
         android:layout_marginVertical="@dimen/padding_extra_small"
         android:layout_marginHorizontal="@dimen/padding_medium"
         android:elevation="4dp"
@@ -28,8 +28,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/productImage"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="@dimen/inventory_item_image_width"
+                android:layout_height="@dimen/inventory_item_image_width"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -74,10 +74,11 @@
                 android:id="@+id/productStock"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_extra_small"
                 app:layout_constraintBaseline_toBaselineOf="@id/productPrice"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/deleteButton"
                 android:text="@{productDetails.stock}"
-                style="@style/TextAppearance.Material3.BodySmall"/>
+                style="@style/TextAppearance.Material3.LabelLarge"/>
 
             <ImageButton
                 android:id="@+id/deleteButton"
@@ -86,7 +87,7 @@
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@string/delete"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/baseline_delete_outline_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

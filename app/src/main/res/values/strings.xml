@@ -51,4 +51,6 @@
     <string name="inventory_search_content_description">Search for product name or number</string>
     <string name="search_bar_clear_content_description">Clear search text</string>
     <string name="inventory_search_hint">Search product name or number</string>
+    <string name="new_product_fab_content_desc">Add new product</string>
+    <string name="delete_product_content_desc">Delete %s</string>
 </resources>
