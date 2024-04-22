@@ -21,4 +21,5 @@
 
     <dimen name="inventory_item_image_width">64dp</dimen>
     <dimen name="inventory_item_card_height">80dp</dimen>
+    <dimen name="entry_image_size">128dp</dimen>
 </resources>

@@ -2,6 +2,8 @@ package com.mobile_programming.sari_sari_inventory_app.utils
 
 import com.mobile_programming.sari_sari_inventory_app.R
 
+const val productImageDir = "/thumbnails/"
+
 enum class SortingType {
     ByProductName,
     ByProductNumber,

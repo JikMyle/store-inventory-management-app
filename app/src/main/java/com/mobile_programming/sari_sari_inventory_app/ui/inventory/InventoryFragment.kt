@@ -22,6 +22,7 @@ import com.mobile_programming.sari_sari_inventory_app.MainActivity
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.databinding.FragmentInventoryBinding
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
+import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import com.mobile_programming.sari_sari_inventory_app.utils.SortingType
 import kotlinx.coroutines.launch
 
@@ -52,6 +53,13 @@ class InventoryFragment : Fragment() {
             onDeleteClick = { product ->
                 lifecycleScope.launch {
                     viewModel.deleteProduct(product)
+                    product.toProductDetails().imageUri?.let {
+                        requireContext().contentResolver.delete(
+                            it,
+                            null,
+                            null
+                        )
+                    }
                 }
             }
         )
