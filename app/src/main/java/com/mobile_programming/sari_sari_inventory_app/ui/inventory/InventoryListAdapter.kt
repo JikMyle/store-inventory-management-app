@@ -2,6 +2,7 @@ package com.mobile_programming.sari_sari_inventory_app.ui.inventory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +64,7 @@ class InventoryListAdapter(
 
             if (productDetails.imageUri != null) {
                 binding.productImage.setImageURI(productDetails.imageUri)
+                binding.productImage.setPadding(0)
             }
 
             binding.productNumber.text =

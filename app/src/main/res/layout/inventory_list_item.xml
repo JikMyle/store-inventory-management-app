@@ -34,10 +34,11 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:src="@drawable/baseline_no_image_24"
+                android:padding="@dimen/padding_small"
                 android:contentDescription="@string/product_image"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"/>
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"/>
 
             <TextView
                 android:id="@+id/productName"
@@ -98,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.2"/>
+                app:layout_constraintGuide_begin="@dimen/inventory_item_card_height"/>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/descriptionEndGuideline"
