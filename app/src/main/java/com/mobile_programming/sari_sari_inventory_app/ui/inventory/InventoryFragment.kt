@@ -40,7 +40,7 @@ class InventoryFragment : Fragment() {
     ): View {
 
         binding = FragmentInventoryBinding.inflate(layoutInflater)
-        navController = (activity as MainActivity).findNavController(R.id.my_nav_host_fragment)
+        navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
 
         val adapter = InventoryListAdapter(
             onItemClick = { productId ->
@@ -75,11 +75,12 @@ class InventoryFragment : Fragment() {
             adapter.submitList(viewModel.uiState.value.productList)
         }
 
-        val topAppBar = binding.topAppBar
-
-        topAppBar.setNavigationOnClickListener {
+        binding.topAppToolbar.setNavigationOnClickListener {
             navController.popBackStack()
         }
+
+        binding.botNavBar.selectedItemId = R.id.navigate_inventory
+        binding.botNavBar.setOnItemSelectedListener { onNavItemClick(it) }
 
         binding.sortMenuButton.setOnClickListener { view: View ->
             showPopupMenu(view, R.menu.sorting_type_menu)
@@ -112,14 +113,34 @@ class InventoryFragment : Fragment() {
     }
 
     override fun onResume() {
-        super.onResume()
         originalSoftInputMode = activity?.window?.getSoftInputMode()
         activity?.window?.attributes?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        super.onResume()
     }
 
     override fun onPause() {
-        super.onPause()
         activity?.window?.attributes?.softInputMode = originalSoftInputMode
+        super.onPause()
+    }
+
+    private fun onNavItemClick(navItem: MenuItem) : Boolean {
+        return when(navItem.itemId) {
+            R.id.navigate_home -> {
+                navController.navigate(InventoryFragmentDirections.inventoryToHome())
+                false
+            }
+
+            R.id.navigate_inventory -> true
+
+            R.id.navigate_receipt -> {
+                navController.navigate(InventoryFragmentDirections.inventoryToReceipt())
+                false
+            }
+
+            R.id.navigate_settings -> false
+
+            else -> false
+        }
     }
 
     private fun showPopupMenu(view: View, @MenuRes menuRes: Int) {

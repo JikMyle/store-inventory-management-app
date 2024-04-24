@@ -131,7 +131,7 @@ class ProductEntryFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        navController = (activity as MainActivity).findNavController(R.id.my_nav_host_fragment)
+        navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
 
         viewModel.uiState.asLiveData().observe(
             viewLifecycleOwner

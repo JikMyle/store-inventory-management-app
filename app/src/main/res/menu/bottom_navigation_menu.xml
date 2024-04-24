@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigationHome"
+        android:id="@+id/navigate_home"
         android:icon="@drawable/baseline_home_24"
         android:title="@string/home" />
     <item
-        android:id="@+id/navigationInventory"
+        android:id="@+id/navigate_inventory"
         android:icon="@drawable/baseline_format_list_bulleted_24"
         android:title="@string/inventory" />
     <item
-        android:id="@+id/navigationSell"
+        android:id="@+id/navigate_receipt"
         android:icon="@drawable/baseline_shopping_cart_24"
         android:title="@string/sell" />
     <item
-        android:id="@+id/navigationSettings"
+        android:id="@+id/navigate_settings"
         android:icon="@drawable/baseline_settings_24"
         android:title="@string/settings" />
 </menu>

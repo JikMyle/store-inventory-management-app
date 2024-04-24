@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/topAppBar"
+                android:id="@+id/top_app_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/top_app_bar_height"
                 android:fitsSystemWindows="true"

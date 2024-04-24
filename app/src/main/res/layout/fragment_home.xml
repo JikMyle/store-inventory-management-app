@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.mobile_programming.sari_sari_inventory_app.ui.home.HomeViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/top_app_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/top_app_bar_height"
+                    android:fitsSystemWindows="true"
+                    android:minHeight="?attr/actionBarSize"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:title=""
+                    app:titleCentered="true" />
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <!-- Add Home Screen Content Here -->
+
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bot_app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bottom_navigation_height"
+                android:layout_gravity="bottom"
+                app:fabAlignmentMode="end"
+                app:fabAnimationMode="slide"
+                app:fabAnchorMode="cradle"
+                app:fabCradleVerticalOffset="@dimen/fab_bottom_app_bar_vert_margin"
+                app:hideOnScroll="true"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <!-- Bottom Navigation -->
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/bot_nav_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bottom_navigation_height"
+                    app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+                    app:menu="@menu/bottom_navigation_menu"
+                    app:elevation="0dp"/>
+
+            </com.google.android.material.bottomappbar.BottomAppBar>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

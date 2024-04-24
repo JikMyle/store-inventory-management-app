@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mobile_programming.sari_sari_inventory_app.InventoryApplication
+import com.mobile_programming.sari_sari_inventory_app.ui.home.HomeViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.inventory.InventoryViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetailsViewModel
 import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductEntryViewModel
@@ -15,6 +16,13 @@ import com.mobile_programming.sari_sari_inventory_app.ui.scanner.StockUpScannerV
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+
+        initializer {
+            HomeViewModel(
+                inventoryApplication().container.inventoryRepository
+            )
+        }
+
         initializer {
             ProductEntryViewModel(
                 this.createSavedStateHandle(),
