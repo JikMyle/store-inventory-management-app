@@ -1,5 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.ui.inventory
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.doAfterTextChanged
@@ -18,10 +20,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mobile_programming.sari_sari_inventory_app.MainActivity
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.databinding.FragmentInventoryBinding
 import com.mobile_programming.sari_sari_inventory_app.ui.AppViewModelProvider
+import com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetails
+import com.mobile_programming.sari_sari_inventory_app.ui.product.toProduct
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import com.mobile_programming.sari_sari_inventory_app.utils.SortingType
 import kotlinx.coroutines.launch
@@ -52,14 +57,10 @@ class InventoryFragment : Fragment() {
             },
             onDeleteClick = { product ->
                 lifecycleScope.launch {
-                    viewModel.deleteProduct(product)
-                    product.toProductDetails().imageUri?.let {
-                        requireContext().contentResolver.delete(
-                            it,
-                            null,
-                            null
-                        )
-                    }
+                    showDeleteConfirmationDialog(
+                        context = requireContext(),
+                        productDetails = product.toProductDetails()
+                    )
                 }
             }
         )
@@ -197,6 +198,46 @@ class InventoryFragment : Fragment() {
             }
 
             else -> false
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(
+        context: Context,
+        productDetails: ProductDetails
+    ) {
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.delete_confirmation_title)
+            .setMessage(R.string.delete_confirmation_message)
+            .setNeutralButton(R.string.cancel, null)
+            .setPositiveButton(R.string.confirm) { _, _ ->
+                deleteSelectedProduct(context, productDetails)
+            }
+            .show()
+    }
+
+    private fun showProductDeletedToast(context: Context) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.product_deleted),
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun deleteSelectedProduct(
+        context: Context,
+        productDetails: ProductDetails
+    ) {
+        lifecycleScope.launch {
+            productDetails.imageUri?.let { uri ->
+                context.contentResolver.delete(
+                    uri,
+                    null,
+                    null
+                )
+            }
+
+            viewModel.deleteProduct(productDetails.toProduct())
+            showProductDeletedToast(context)
         }
     }
 }
