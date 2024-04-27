@@ -79,4 +79,12 @@
     <string name="product_added_to_receipt">Product Added To Receipt!</string>
     <string name="product_details_updated">Product Details Updated!</string>
     <string name="product_deleted">Product Deleted!</string>
+
+    <string name="top_app_bar_navigate_up_content_desc">Navigate back</string>
+    <string name="flip_camera_content_description">Flip camera</string>
+    <string name="scanner_no_camera_access">
+        Barcode scanner unavailable. \n
+        Enable camera access in app settings to use. \n
+        App Settings > Permissions > Camera
+    </string>
 </resources>

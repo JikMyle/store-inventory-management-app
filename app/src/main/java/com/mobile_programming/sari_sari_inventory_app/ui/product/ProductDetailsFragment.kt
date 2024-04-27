@@ -169,7 +169,7 @@ class ProductDetailsFragment : Fragment() {
         }
 
         binding.topAppToolbar.setNavigationOnClickListener {
-            navController.popBackStack()
+            onUpPressed()
         }
 
         binding.topAppToolbar.setOnMenuItemClickListener { menuItem: MenuItem ->

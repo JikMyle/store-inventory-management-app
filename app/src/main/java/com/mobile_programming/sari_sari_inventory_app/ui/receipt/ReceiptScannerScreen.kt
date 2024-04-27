@@ -35,6 +35,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile_programming.sari_sari_inventory_app.R
@@ -45,6 +46,7 @@ import com.mobile_programming.sari_sari_inventory_app.ui.product.toProduct
 import com.mobile_programming.sari_sari_inventory_app.ui.product.toProductDetails
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScanner
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScannerSearchBar
+import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BarcodeScannerTopAppBar
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.BottomSheetProductDetailsRow
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.NewProductDialog
 import com.mobile_programming.sari_sari_inventory_app.ui.scanner.ProductAmountBottomSheetState
@@ -57,27 +59,44 @@ fun ReceiptScannerScreen(
     modifier: Modifier = Modifier,
     scannerViewModel: ReceiptScannerViewModel = viewModel(factory = AppViewModelProvider.Factory),
     receiptViewModel: ReceiptViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    canNavigateBack: Boolean,
+    onNavigateUp: () -> Unit,
     navigateToProductEntry: (String) -> Unit,
 ) {
     val uiState = scannerViewModel.uiState.collectAsState()
 
-    ReceiptScannerBody(
-        uiState = uiState,
-        onResultClick = {
-            scannerViewModel.updateProductWithAmount(
-                productDetails = it.toProductDetails()
-            )
-            scannerViewModel.toggleBottomSheet(true)
-            scannerViewModel.toggleSearchBar(false)
-        },
-        addToReceiptList = { receiptViewModel.addProductToReceipt(it) },
-        onDialogDismiss = scannerViewModel::clearBarcodeScanned,
-        navigateToProductEntry = {
-            navigateToProductEntry(it)
-            scannerViewModel.clearBarcodeScanned()
-        },
+    Box(
         modifier = modifier
-    )
+    ){
+        ReceiptScannerBody(
+            uiState = uiState,
+            onResultClick = {
+                scannerViewModel.updateProductWithAmount(
+                    productDetails = it.toProductDetails()
+                )
+                scannerViewModel.toggleBottomSheet(true)
+                scannerViewModel.toggleSearchBar(false)
+            },
+            addToReceiptList = { receiptViewModel.addProductToReceipt(it) },
+            onDialogDismiss = scannerViewModel::clearBarcodeScanned,
+            navigateToProductEntry = {
+                navigateToProductEntry(it)
+                scannerViewModel.clearBarcodeScanned()
+            },
+        )
+
+        BarcodeScannerTopAppBar(
+            scannerCameraState = uiState.value.scannerCameraState,
+            canNavigateBack = canNavigateBack,
+            onNavigateUp = onNavigateUp,
+            navigateToProductEntry = {
+                navigateToProductEntry("")
+            },
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .zIndex(10f)
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
