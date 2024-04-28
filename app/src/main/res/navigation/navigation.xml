@@ -4,27 +4,27 @@
     android:id="@+id/navigation"
     app:startDestination="@id/homeFragment">
     <fragment
-        android:id="@+id/receiptScreenFragment"
-        android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptScreenFragment"
-        android:label="ReceiptScreenFragment" >
+        android:id="@+id/receiptFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptFragment"
+        android:label="receiptFragment">
         <action
-            android:id="@+id/action_receiptScreenFragment2_to_receiptScannerScreenFragment2"
-            app:destination="@id/receiptScannerScreenFragment" />
+            android:id="@+id/receiptToReceiptScanner"
+            app:destination="@id/receiptScannerFragment" />
         <action
             android:id="@+id/receiptToInventory"
             app:destination="@id/inventoryFragment" />
         <action
-            android:id="@+id/action_receiptScreenFragment_to_homeFragment"
+            android:id="@+id/receiptToHome"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/receiptScannerScreenFragment"
+        android:id="@+id/receiptScannerFragment"
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptScannerScreenFragment"
-        android:label="ReceiptScannerScreenFragment" >
+        android:label="receiptScannerFragment">
         <action
-            android:id="@+id/action_receiptScannerScreenFragment2_to_productEntryFragment"
+            android:id="@+id/receiptScannerToProductEntry"
             app:destination="@id/productEntryFragment" />
     </fragment>
     <fragment
@@ -32,7 +32,7 @@
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.scanner.StockUpScannerScreenFragment"
         android:label="StockUpScannerScreenFragment" >
         <action
-            android:id="@+id/action_stockUpScannerScreenFragment_to_productEntryFragment"
+            android:id="@+id/stockUpScannerToProductEntry"
             app:destination="@id/productEntryFragment" />
     </fragment>
     <fragment
@@ -49,13 +49,13 @@
         android:label="InventoryFragment" >
         <action
             android:id="@+id/inventoryToProductDetails"
-            app:destination="@id/productDetailsFragment" />
+            app:destination="@id/productDetailsFragment"/>
         <action
             android:id="@+id/inventoryToStockUpScanner"
             app:destination="@id/stockUpScannerScreenFragment" />
         <action
             android:id="@+id/inventoryToReceipt"
-            app:destination="@id/receiptScreenFragment" />
+            app:destination="@id/receiptFragment"/>
         <action
             android:id="@+id/inventoryToHome"
             app:destination="@id/homeFragment"
@@ -76,9 +76,9 @@
         android:label="HomeFragment" >
         <action
             android:id="@+id/homeToInventory"
-            app:destination="@id/inventoryFragment" />
+            app:destination="@id/inventoryFragment"/>
         <action
             android:id="@+id/homeToReceipt"
-            app:destination="@id/receiptScreenFragment" />
+            app:destination="@id/receiptFragment"/>
     </fragment>
 </navigation>

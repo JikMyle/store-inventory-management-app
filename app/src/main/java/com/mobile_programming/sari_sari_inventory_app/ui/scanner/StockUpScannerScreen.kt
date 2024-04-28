@@ -67,7 +67,7 @@ fun StockUpScannerScreen(
 
     Box(
         modifier = modifier
-    ){
+    ) {
         StockUpScannerBody(
             uiState = uiState,
             onResultClick = {
@@ -84,17 +84,19 @@ fun StockUpScannerScreen(
             },
         )
 
-        BarcodeScannerTopAppBar(
-            scannerCameraState = uiState.value.scannerCameraState,
-            canNavigateBack = canNavigateBack,
-            onNavigateUp = onNavigateUp,
-            navigateToProductEntry = {
-                navigateToProductEntry("")
-            },
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .zIndex(10f)
-        )
+        if (!uiState.value.searchBarState.isActive) {
+            BarcodeScannerTopAppBar(
+                scannerCameraState = uiState.value.scannerCameraState,
+                canNavigateBack = canNavigateBack,
+                onNavigateUp = onNavigateUp,
+                navigateToProductEntry = {
+                    navigateToProductEntry("")
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(10f)
+            )
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SariSariInventoryApp</string>
 
-    <string name="product_image">Product Image</string>
+    <string name="product_image">Image of %s</string>
     <string name="product_number">Product Number</string>
     <string name="product_name">Product Name</string>
     <string name="product_price">Price</string>
@@ -20,6 +20,7 @@
         Would you like to create a new one?
     </string>
 
+    <string name="clear">Clear</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
@@ -34,6 +35,7 @@
     <string name="error_maximum_exceeded">Value must not exceed %1$s.</string>
     <string name="error_minimum_not_reached">Value must be more than %1$s.</string>
 
+    <string name="receipt">Receipt</string>
     <string name="inventory">Inventory</string>
     <string name="home">Home</string>
     <string name="sell">Sell</string>
@@ -49,18 +51,20 @@
         You cannot undo this action.
     </string>
 
+    <string name="no_product_image">Blank product image</string>
+    <string name="no_product_number">No Product Number</string>
+    <string name="inventory_search_hint">Search product name or number</string>
+    <string name="inventory_search_content_desc">Search for product name or number</string>
+    <string name="search_bar_clear_content_desc">Clear search text</string>
+
     <string name="sort_by">Sort By</string>
     <string name="sort_menu_content_description">Sorting type menu</string>
+
     <string name="sort_by_product_name">By Product Name</string>
     <string name="sort_by_product_number">By Product Number</string>
     <string name="sort_by_product_price">By Price</string>
     <string name="sort_by_product_stock">By Stock</string>
 
-    <string name="no_product_number">No Product Number</string>
-
-    <string name="inventory_search_content_description">Search for product name or number</string>
-    <string name="search_bar_clear_content_description">Clear search text</string>
-    <string name="inventory_search_hint">Search product name or number</string>
     <string name="new_product_fab_content_desc">Add new product</string>
     <string name="delete_product_content_desc">Delete %s</string>
     <string name="new_product_image_content_desc">Product image</string>
@@ -87,4 +91,19 @@
         Enable camera access in app settings to use. \n
         App Settings > Permissions > Camera
     </string>
+
+    <string name="receipt_total">Total: &lt;b>%s&lt;/b></string>
+    <string name="product_sub_total">Sub Total: &lt;b>%s&lt;/b></string>
+    <string name="product_amount">Amount: &lt;b>%s&lt;/b></string>
+    <string name="remove_product_from_receipt_content_desc">Remove %s from receipt</string>
+
+    <string name="clear_receipt_dialog_title">Clear Receipt</string>
+    <string name="clear_receipt_dialog_message">This action cannot be undone.</string>
+
+    <string name="confirm_sale_dialog_title">Confirm Sale</string>
+    <string name="confirm_sale_dialog_message">
+        Sale will be recorded if confirmed.
+        This will clear also clear the receipt.
+    </string>
+    <string name="sale_confirmed">Sale successful!</string>
 </resources>

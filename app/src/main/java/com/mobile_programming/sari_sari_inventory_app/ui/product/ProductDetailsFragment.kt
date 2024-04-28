@@ -35,7 +35,6 @@ import java.util.Calendar
 class ProductDetailsFragment : Fragment() {
     private lateinit var binding: FragmentProductDetailsBinding
     private lateinit var navController: NavController
-
     private val viewModel: ProductDetailsViewModel by viewModels { AppViewModelProvider.Factory }
 
     private var tempImage: File? = null

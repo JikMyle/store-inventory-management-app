@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.mobile_programming.sari_sari_inventory_app.MainActivity
@@ -17,8 +17,10 @@ import com.mobile_programming.sari_sari_inventory_app.ui.theme.SariSariInventory
 
 class StockUpScannerScreenFragment : Fragment() {
     private lateinit var binding: FragmentStockUpScannerBinding
-    private lateinit var viewModel: StockUpScannerViewModel
     private lateinit var navController: NavController
+    private val viewModel: StockUpScannerViewModel by viewModels {
+        AppViewModelProvider.Factory
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,12 +35,9 @@ class StockUpScannerScreenFragment : Fragment() {
             false
         )
 
-        navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
-
-        val factory = AppViewModelProvider.Factory
-        val viewModelProvider = ViewModelProvider(requireActivity(), factory)
-
-        viewModel = viewModelProvider[StockUpScannerViewModel::class.java]
+        navController = (activity as MainActivity).findNavController(
+            R.id.main_nav_host_fragment
+        )
 
         binding.stockUpScannerComposeView.setContent {
             SariSariInventoryAppTheme {
@@ -50,7 +49,7 @@ class StockUpScannerScreenFragment : Fragment() {
                         viewModel.toggleSearchBar(false)
                         navController.navigate(
                             StockUpScannerScreenFragmentDirections
-                                .actionStockUpScannerScreenFragmentToProductEntryFragment(
+                                .stockUpScannerToProductEntry(
                                     it
                                 )
                         )

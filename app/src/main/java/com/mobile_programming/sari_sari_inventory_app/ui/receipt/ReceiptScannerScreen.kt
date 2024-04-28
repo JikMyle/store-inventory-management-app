@@ -67,7 +67,7 @@ fun ReceiptScannerScreen(
 
     Box(
         modifier = modifier
-    ){
+    ) {
         ReceiptScannerBody(
             uiState = uiState,
             onResultClick = {
@@ -85,17 +85,19 @@ fun ReceiptScannerScreen(
             },
         )
 
-        BarcodeScannerTopAppBar(
-            scannerCameraState = uiState.value.scannerCameraState,
-            canNavigateBack = canNavigateBack,
-            onNavigateUp = onNavigateUp,
-            navigateToProductEntry = {
-                navigateToProductEntry("")
-            },
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .zIndex(10f)
-        )
+        if (!uiState.value.searchBarState.isActive) {
+            BarcodeScannerTopAppBar(
+                scannerCameraState = uiState.value.scannerCameraState,
+                canNavigateBack = canNavigateBack,
+                onNavigateUp = onNavigateUp,
+                navigateToProductEntry = {
+                    navigateToProductEntry("")
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(10f)
+            )
+        }
     }
 }
 

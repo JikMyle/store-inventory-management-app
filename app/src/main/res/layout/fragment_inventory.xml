@@ -21,7 +21,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/top_app_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/top_app_bar_height"
+                android:layout_height="@dimen/app_bar_height_medium"
                 android:fitsSystemWindows="true"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
@@ -46,7 +46,7 @@
                 app:layout_constraintWidth_max="@dimen/max_text_field_width"
                 app:boxBackgroundColor="?attr/colorSurfaceContainerHigh"
                 app:boxStrokeWidth="0dp"
-                app:endIconContentDescription="@string/search_bar_clear_content_description"
+                app:endIconContentDescription="@string/search_bar_clear_content_desc"
                 app:endIconDrawable="@drawable/baseline_clear_24"
                 app:endIconMode="clear_text"
                 app:hintEnabled="false"
@@ -55,7 +55,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
-                app:startIconContentDescription="@string/inventory_search_content_description"
+                app:startIconContentDescription="@string/inventory_search_content_desc"
                 app:startIconDrawable="@drawable/baseline_search_24">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -105,7 +105,7 @@
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bot_app_bar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/bottom_navigation_height"
+            android:layout_height="@dimen/app_bar_height_large"
             android:layout_gravity="bottom"
             app:fabAlignmentMode="end"
             app:fabAnimationMode="slide"
@@ -118,7 +118,7 @@
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bot_nav_bar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/bottom_navigation_height"
+                android:layout_height="@dimen/app_bar_height_large"
                 app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
                 app:menu="@menu/bottom_navigation_menu"
                 app:elevation="0dp"/>
