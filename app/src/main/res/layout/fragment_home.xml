@@ -23,7 +23,7 @@
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/top_app_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/top_app_bar_height"
+                    android:layout_height="@dimen/app_bar_height_medium"
                     android:fitsSystemWindows="true"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_scrollFlags="scroll|enterAlways"
@@ -36,7 +36,7 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bot_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/bottom_navigation_height"
+                android:layout_height="@dimen/app_bar_height_large"
                 android:layout_gravity="bottom"
                 app:fabAlignmentMode="end"
                 app:fabAnimationMode="slide"
@@ -49,7 +49,7 @@
                 <com.google.android.material.bottomnavigation.BottomNavigationView
                     android:id="@+id/bot_nav_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/bottom_navigation_height"
+                    android:layout_height="@dimen/app_bar_height_large"
                     app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
                     app:menu="@menu/bottom_navigation_menu"
                     app:elevation="0dp"/>

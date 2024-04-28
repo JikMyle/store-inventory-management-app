@@ -20,7 +20,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/top_app_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/top_app_bar_height"
+                android:layout_height="@dimen/app_bar_height_medium"
                 android:fitsSystemWindows="true"
                 android:minHeight="?attr/actionBarSize"
                 app:navigationIcon="@drawable/baseline_arrow_back_24"

@@ -1,7 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.ui.receipt
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.mobile_programming.sari_sari_inventory_app.data.InventoryRepository
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Calendar
 
@@ -50,11 +48,7 @@ class ReceiptViewModel(
         val productDetails = productWithAmount.productDetails
         val amount = productWithAmount.amount
 
-        if (amount == 0) {
-            return
-        } else {
-            receiptMap[productDetails] = amount
-        }
+        receiptMap[productDetails] = amount
 
         val total = getReceiptTotal(receiptMap)
 
@@ -91,17 +85,15 @@ class ReceiptViewModel(
         return total
     }
 
-    fun confirmSale() {
-        viewModelScope.launch {
-            val receiptMap = _uiState.value.receiptMap
-            insertReceipt(receiptMap)
+    suspend fun confirmSale() {
+        val receiptMap = _uiState.value.receiptMap
+        insertReceipt(receiptMap)
 
-            receiptMap.forEach {
-                subtractProductStock(it.key.toProduct(), it.value)
-            }
-
-            clearReceipt()
+        receiptMap.forEach {
+            subtractProductStock(it.key.toProduct(), it.value)
         }
+
+        clearReceipt()
     }
 
     private suspend fun insertReceipt(receiptMap: Map<ProductDetails, Int>): Long {
