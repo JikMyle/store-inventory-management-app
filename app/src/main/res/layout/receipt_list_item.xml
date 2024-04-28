@@ -104,20 +104,18 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/product_sub_total"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_percent="0.5"
+                    app:layout_constraintWidth_percent="0.4"
                     tools:ignore="RtlSymmetry" />
 
                 <TextView
                     android:id="@+id/product_sub_total"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:text="@{@string/product_sub_total"
+                    android:text="@string/product_sub_total"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     app:layout_constraintBaseline_toBaselineOf="@id/product_amount"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/product_amount"
-                    app:layout_constraintWidth_percent="0.5" />
+                    app:layout_constraintStart_toEndOf="@id/product_amount"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
