@@ -37,7 +37,9 @@ import java.io.FileOutputStream
 import java.util.Calendar
 
 class ProductEntryFragment : Fragment() {
-    private lateinit var binding: FragmentProductEntryBinding
+    private var _binding: FragmentProductEntryBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var navController: NavController
     private val viewModel: ProductEntryViewModel by viewModels { AppViewModelProvider.Factory }
 
@@ -125,13 +127,19 @@ class ProductEntryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentProductEntryBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = this
+        navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val context = requireContext()
 
-        binding = FragmentProductEntryBinding.inflate(layoutInflater)
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-
-        navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
 
         viewModel.uiState.asLiveData().observe(
             viewLifecycleOwner
@@ -211,13 +219,32 @@ class ProductEntryFragment : Fragment() {
         binding.removePhotoButton.setOnClickListener {
             clearTempImage()
         }
-
-        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         tempImage?.delete()
+        tempImage = null
+
+        tempCameraImage?.delete()
+        tempCameraImage = null
+
+        binding.apply {
+            topAppToolbar.setNavigationOnClickListener(null)
+            topAppToolbar.setOnMenuItemClickListener(null)
+            addPhotoButton.setOnClickListener(null)
+            removePhotoButton.setOnClickListener(null)
+            productNameField.editText?.removeTextChangedListener(null)
+            productNumberField.editText?.removeTextChangedListener(null)
+            productPriceField.editText?.removeTextChangedListener(null)
+            productStockField.editText?.removeTextChangedListener(null)
+            viewModel = null
+            lifecycleOwner = null
+        }
+
+        viewModel.uiState.asLiveData().removeObservers(this)
+        _binding = null
     }
 
     private fun onTopAppBarMenuItemClick(menuItem: MenuItem) : Boolean {

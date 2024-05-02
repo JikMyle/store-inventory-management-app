@@ -110,6 +110,15 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        binding.apply {
+            productStatsRecyclerView.adapter = null
+            botNavBar.setOnClickListener(null)
+            productStatsTabLayout.clearOnTabSelectedListeners()
+            lifecycleOwner = null
+        }
+
+        viewModel.uiState.asLiveData().removeObservers(this)
         _binding = null
     }
 

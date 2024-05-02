@@ -33,7 +33,9 @@ import java.io.File
 import java.util.Calendar
 
 class ProductDetailsFragment : Fragment() {
-    private lateinit var binding: FragmentProductDetailsBinding
+    private var _binding: FragmentProductDetailsBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var navController: NavController
     private val viewModel: ProductDetailsViewModel by viewModels { AppViewModelProvider.Factory }
 
@@ -123,10 +125,16 @@ class ProductDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProductDetailsBinding.inflate(layoutInflater)
+        _binding = FragmentProductDetailsBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = this
         navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
 
-        binding.lifecycleOwner = this
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         binding.viewModel = viewModel
 
         viewModel.uiState.value.productDetails.imageUri?.let { uri ->
@@ -214,8 +222,6 @@ class ProductDetailsFragment : Fragment() {
         binding.removePhotoButton.setOnClickListener {
             clearTempImage()
         }
-
-        return binding.root
     }
 
     override fun onDestroyView() {
@@ -224,6 +230,22 @@ class ProductDetailsFragment : Fragment() {
         tempImage?.delete()
         tempCameraImage?.delete()
         onBackPressedCallback.remove()
+
+        binding.apply {
+            topAppToolbar.setOnMenuItemClickListener(null)
+            topAppToolbar.setNavigationOnClickListener(null)
+            addPhotoButton.setOnClickListener(null)
+            removePhotoButton.setOnClickListener(null)
+            productNameField.editText?.removeTextChangedListener(null)
+            productNumberField.editText?.removeTextChangedListener(null)
+            productPriceField.editText?.removeTextChangedListener(null)
+            productStockField.editText?.removeTextChangedListener(null)
+            viewModel = null
+            lifecycleOwner = null
+        }
+
+        viewModel.uiState.asLiveData().removeObservers(this)
+        _binding = null
     }
 
     private fun onUpPressed() {

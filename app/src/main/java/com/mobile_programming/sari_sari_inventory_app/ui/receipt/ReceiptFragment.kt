@@ -26,7 +26,9 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 
 class ReceiptFragment : Fragment() {
-    private lateinit var binding: FragmentReceiptBinding
+    private var _binding: FragmentReceiptBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var navController: NavController
 
     private val viewModel: ReceiptViewModel by viewModels(
@@ -43,11 +45,17 @@ class ReceiptFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val context = requireContext()
 
-        binding = FragmentReceiptBinding.inflate(layoutInflater)
+        _binding = FragmentReceiptBinding.inflate(layoutInflater)
         navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val context = view.context
         val adapter = ReceiptListAdapter(
             onItemClick = { productWithAmount ->
                 toggleBottomSheet(
@@ -60,9 +68,32 @@ class ReceiptFragment : Fragment() {
             }
         )
 
-        binding.receiptRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.receiptRecyclerView.adapter = adapter
-        binding.receiptRecyclerView.itemAnimator = null
+        binding.apply {
+            receiptRecyclerView.layoutManager = LinearLayoutManager(context)
+            receiptRecyclerView.adapter = adapter
+            receiptRecyclerView.itemAnimator = null
+
+            topAppToolbar.setNavigationOnClickListener {
+                navController.popBackStack()
+            }
+
+            topAppToolbar.setOnMenuItemClickListener { menuItem ->
+                onTopAppBarMenuItemClick(menuItem, context)
+            }
+
+            addProductFAB.setOnClickListener {
+                navController.navigate(
+                    ReceiptFragmentDirections.receiptToReceiptScanner()
+                )
+            }
+
+            confirmButton.isEnabled = this@ReceiptFragment.viewModel
+                .uiState.value.receiptMap.isNotEmpty()
+            confirmButton.setOnClickListener {
+                showSaleConfirmationDialog(context)
+            }
+        }
+
         adapter.submitList(viewModel.uiState.value.receiptMap.toList())
 
         viewModel.uiState.asLiveData().observe(
@@ -78,27 +109,24 @@ class ReceiptFragment : Fragment() {
 
             binding.receiptTotal.text = styledTotal
         }
+    }
 
-        binding.topAppToolbar.setNavigationOnClickListener {
-            navController.popBackStack()
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        binding.apply {
+            topAppToolbar.setOnMenuItemClickListener(null)
+            topAppToolbar.setNavigationOnClickListener(null)
+            receiptRecyclerView.adapter = null
+            addProductFAB.setOnClickListener(null)
+            confirmButton.setOnClickListener(null)
+
+            uiState = null
+            lifecycleOwner = null
         }
 
-        binding.topAppToolbar.setOnMenuItemClickListener { menuItem ->
-            onTopAppBarMenuItemClick(menuItem, context)
-        }
-
-        binding.addProductFAB.setOnClickListener {
-            navController.navigate(
-                ReceiptFragmentDirections.receiptToReceiptScanner()
-            )
-        }
-
-        binding.confirmButton.isEnabled = viewModel.uiState.value.receiptMap.isNotEmpty()
-        binding.confirmButton.setOnClickListener {
-            showSaleConfirmationDialog(context)
-        }
-
-        return binding.root
+        viewModel.uiState.asLiveData().removeObservers(this)
+        _binding = null
     }
 
     private fun onTopAppBarMenuItemClick(

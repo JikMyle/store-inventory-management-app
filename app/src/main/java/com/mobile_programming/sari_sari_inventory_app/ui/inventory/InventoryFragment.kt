@@ -32,7 +32,9 @@ import com.mobile_programming.sari_sari_inventory_app.utils.SortingType
 import kotlinx.coroutines.launch
 
 class InventoryFragment : Fragment() {
-    private lateinit var binding: FragmentInventoryBinding
+    private var _binding : FragmentInventoryBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var navController: NavController
     private val viewModel: InventoryViewModel by viewModels { AppViewModelProvider.Factory }
 
@@ -44,8 +46,15 @@ class InventoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentInventoryBinding.inflate(layoutInflater)
+        _binding = FragmentInventoryBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = this
         navController = (activity as MainActivity).findNavController(R.id.main_nav_host_fragment)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val adapter = InventoryListAdapter(
             onItemClick = { productId ->
@@ -65,14 +74,6 @@ class InventoryFragment : Fragment() {
             }
         )
 
-        binding.apply {
-            lifecycleOwner = this@InventoryFragment
-
-            inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
-            binding.inventoryRecyclerView.adapter = adapter
-            binding.inventoryRecyclerView.itemAnimator = null
-        }
-
         adapter.submitList(viewModel.uiState.value.productList)
 
         viewModel.uiState.asLiveData().observe(
@@ -81,15 +82,27 @@ class InventoryFragment : Fragment() {
             adapter.submitList(viewModel.uiState.value.productList)
         }
 
-        binding.topAppToolbar.setNavigationOnClickListener {
-            navController.popBackStack()
-        }
+        binding.apply {
+            inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.inventoryRecyclerView.adapter = adapter
+            binding.inventoryRecyclerView.itemAnimator = null
 
-        binding.botNavBar.selectedItemId = R.id.navigate_inventory
-        binding.botNavBar.setOnItemSelectedListener { onNavItemClick(it) }
+            topAppToolbar.setNavigationOnClickListener {
+                navController.popBackStack()
+            }
 
-        binding.sortMenuButton.setOnClickListener { view: View ->
-            showPopupMenu(view, R.menu.sorting_type_menu)
+            botNavBar.selectedItemId = R.id.navigate_inventory
+            botNavBar.setOnItemSelectedListener { onNavItemClick(it) }
+
+            sortMenuButton.setOnClickListener { hostView: View ->
+                showPopupMenu(hostView, R.menu.sorting_type_menu)
+            }
+
+            addProductFAB.setOnClickListener {
+                navController.navigate(
+                    InventoryFragmentDirections.inventoryToStockUpScanner()
+                )
+            }
         }
 
         val searchBar = binding.searchBar.editText
@@ -108,14 +121,6 @@ class InventoryFragment : Fragment() {
                 false
             }
         }
-
-        binding.addProductFAB.setOnClickListener {
-            navController.navigate(
-                InventoryFragmentDirections.inventoryToStockUpScanner()
-            )
-        }
-
-        return binding.root
     }
 
     override fun onResume() {
@@ -127,6 +132,25 @@ class InventoryFragment : Fragment() {
     override fun onPause() {
         activity?.window?.attributes?.softInputMode = originalSoftInputMode
         super.onPause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        binding.apply {
+            botNavBar.setOnItemSelectedListener(null)
+            topAppToolbar.setNavigationOnClickListener(null)
+            inventoryRecyclerView.adapter = null
+            sortMenuButton.setOnClickListener(null)
+            addProductFAB.setOnClickListener(null)
+            searchBar.editText?.removeTextChangedListener(null)
+            searchBar.editText?.keyListener = null
+            viewModel = null
+            lifecycleOwner = null
+        }
+
+        viewModel.uiState.asLiveData().removeObservers(this)
+        _binding = null
     }
 
     private fun onNavItemClick(navItem: MenuItem) : Boolean {
