@@ -83,8 +83,8 @@
 
             <ImageButton
                 android:id="@+id/deleteButton"
-                android:layout_width="@dimen/icon_button_small"
-                android:layout_height="@dimen/icon_button_small"
+                android:layout_width="@dimen/icon_small"
+                android:layout_height="@dimen/icon_small"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@string/delete"

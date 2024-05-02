@@ -13,9 +13,14 @@
     <dimen name="content_padding">8dp</dimen>
     <dimen name="inventory_search_bar_height">48dp</dimen>
 
-    <dimen name="icon_button_small">24dp</dimen>
-    <dimen name="icon_button_medium">32dp</dimen>
-    <dimen name="icon_button_large">36dp</dimen>
+    <dimen name="icon_small">24dp</dimen>
+    <dimen name="icon_medium">32dp</dimen>
+    <dimen name="icon_large">36dp</dimen>
+    <dimen name="icon_extra_large">48dp</dimen>
+
+    <dimen name="home_indicator_card_height">96dp</dimen>
+    <dimen name="home_product_stats_card_height">48dp</dimen>
+    <dimen name="home_product_stats_image_height">48dp</dimen>
 
     <dimen name="max_text_field_width">488dp</dimen>
     <dimen name="max_button_width">320dp</dimen>
@@ -27,4 +32,8 @@
 
     <dimen name="app_bar_height_medium">64dp</dimen>
     <dimen name="app_bar_height_large">72dp</dimen>
+    
+    <dimen name="rounded_corner_small">8dp</dimen>
+    <dimen name="rounded_corner_medium">16dp</dimen>
+    <dimen name="rounded_corner_large">32dp</dimen>
 </resources>

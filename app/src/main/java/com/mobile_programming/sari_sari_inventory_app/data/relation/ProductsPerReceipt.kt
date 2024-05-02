@@ -1,9 +1,11 @@
 package com.mobile_programming.sari_sari_inventory_app.data.relation
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
 import java.util.Date
 
@@ -48,7 +50,7 @@ data class RevenueOnDate(
 )
 
 data class ProductSale(
-    val productId: Long,
+    @Embedded val product: Product? = null,
     val amountSold: Int,
     val totalRevenue: Double,
 )

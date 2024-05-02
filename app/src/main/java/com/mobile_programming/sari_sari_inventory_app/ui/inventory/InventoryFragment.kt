@@ -65,9 +65,14 @@ class InventoryFragment : Fragment() {
             }
         )
 
-        binding.inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.inventoryRecyclerView.adapter = adapter
-        binding.inventoryRecyclerView.itemAnimator = null
+        binding.apply {
+            lifecycleOwner = this@InventoryFragment
+
+            inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.inventoryRecyclerView.adapter = adapter
+            binding.inventoryRecyclerView.itemAnimator = null
+        }
+
         adapter.submitList(viewModel.uiState.value.productList)
 
         viewModel.uiState.asLiveData().observe(

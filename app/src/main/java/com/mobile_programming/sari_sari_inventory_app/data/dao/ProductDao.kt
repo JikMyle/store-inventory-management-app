@@ -41,12 +41,12 @@ interface ProductDao {
             "OR productNumber LIKE '%' || :nameOrNumber || '%' ")
     fun searchForProduct(nameOrNumber: String) : Flow<List<Product>>
 
-    @Query("SELECT ppr.productId as productId, SUM(ppr.amount) as amountSold, " +
-            "SUM(ppr.revenue) as totalRevenue " +
+    @Query("SELECT p.*, SUM(ppr.amount) as amountSold, SUM(ppr.revenue) as totalRevenue " +
             "FROM productsperreceipt ppr " +
             "INNER JOIN receipts r ON ppr.receiptId = r.id " +
+            "LEFT JOIN products p ON ppr.productId = p.id " +
             "WHERE r.dateCreated >= :dateFrom " +
-            "AND r.dateCreated < :dateTo " +
+            "AND r.dateCreated <= :dateTo " +
             "AND ifnull(ppr.productId = :id, 1) " +
             "GROUP BY ppr.productId")
     fun getSalesFromDates(id: Long?, dateFrom: Date, dateTo: Date) : Flow<List<ProductSale>>
@@ -58,7 +58,7 @@ interface ProductDao {
 
     @Query("SELECT COUNT(*) " +
             "FROM products " +
-            "WHERE stock = :max " +
+            "WHERE stock <= :max " +
             "AND stock > 0 ")
     fun countLowOnStock(max: Int) : Flow<Int>
 }

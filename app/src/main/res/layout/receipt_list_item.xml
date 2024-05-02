@@ -68,12 +68,12 @@
             <Button
                 android:id="@+id/remove_button"
                 style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="@dimen/icon_button_small"
-                android:layout_height="@dimen/icon_button_small"
+                android:layout_width="@dimen/icon_small"
+                android:layout_height="@dimen/icon_small"
                 android:contentDescription="@string/remove_product_from_receipt_content_desc"
                 app:icon="@drawable/baseline_remove_24"
                 app:iconGravity="textStart"
-                app:iconSize="@dimen/icon_button_small"
+                app:iconSize="@dimen/icon_small"
                 app:iconTint="?attr/colorError"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

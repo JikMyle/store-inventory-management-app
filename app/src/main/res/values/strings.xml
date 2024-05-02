@@ -52,6 +52,7 @@
     </string>
 
     <string name="no_product_image">Blank product image</string>
+    <string name="non_existing_product">Product does not exist</string>
     <string name="no_product_number">No Product Number</string>
     <string name="inventory_search_hint">Search product name or number</string>
     <string name="inventory_search_content_desc">Search for product name or number</string>
@@ -106,4 +107,18 @@
         This will clear also clear the receipt.
     </string>
     <string name="sale_confirmed">Sale successful!</string>
+
+    <string name="low_on_stock_icon_content_description">Low on stock indicator</string>
+    <string name="out_of_stock_icon_content_description">Out of stock indicator</string>
+    <string name="home_low_on_stock">
+        Low on&lt;br>
+        Stock: &lt;b>%d&lt;/b>
+    </string>
+    <string name="home_out_of_stock">
+        Out of&lt;br>
+        Stock: &lt;b>%d&lt;/b>
+    </string>
+
+    <string name="sort_by_sold">By Number Sold</string>
+    <string name="sort_by_profit">By Profit Earned</string>
 </resources>

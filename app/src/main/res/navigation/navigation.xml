@@ -11,9 +11,6 @@
             android:id="@+id/receiptToReceiptScanner"
             app:destination="@id/receiptScannerFragment" />
         <action
-            android:id="@+id/receiptToInventory"
-            app:destination="@id/inventoryFragment" />
-        <action
             android:id="@+id/receiptToHome"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
@@ -55,7 +52,8 @@
             app:destination="@id/stockUpScannerScreenFragment" />
         <action
             android:id="@+id/inventoryToReceipt"
-            app:destination="@id/receiptFragment"/>
+            app:destination="@id/receiptFragment"
+            app:popUpTo="@id/homeFragment" />
         <action
             android:id="@+id/inventoryToHome"
             app:destination="@id/homeFragment"
@@ -80,5 +78,8 @@
         <action
             android:id="@+id/homeToReceipt"
             app:destination="@id/receiptFragment"/>
+        <action
+            android:id="@+id/homeToProductDetails"
+            app:destination="@id/productDetailsFragment" />
     </fragment>
 </navigation>

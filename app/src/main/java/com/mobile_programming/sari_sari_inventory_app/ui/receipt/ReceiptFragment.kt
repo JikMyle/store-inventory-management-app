@@ -84,7 +84,7 @@ class ReceiptFragment : Fragment() {
         }
 
         binding.topAppToolbar.setOnMenuItemClickListener { menuItem ->
-            onTopAppBarMenuItemClick(menuItem)
+            onTopAppBarMenuItemClick(menuItem, context)
         }
 
         binding.addProductFAB.setOnClickListener {
@@ -102,13 +102,14 @@ class ReceiptFragment : Fragment() {
     }
 
     private fun onTopAppBarMenuItemClick(
-        menuItem: MenuItem
+        menuItem: MenuItem,
+        context: Context
     ): Boolean {
 
         return when (menuItem.itemId) {
 
             R.id.clear_receipt -> {
-                showClearReceiptDialog(context = requireContext())
+                showClearReceiptDialog(context)
                 true
             }
 
