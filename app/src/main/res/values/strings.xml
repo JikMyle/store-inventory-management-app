@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SariSariInventoryApp</string>
+    <string name="app_name">Stockpile</string>
 
     <string name="product_image">Image of %s</string>
     <string name="product_number">Product Number</string>
