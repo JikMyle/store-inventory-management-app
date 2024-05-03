@@ -6,7 +6,7 @@
     <string name="product_name">Product Name</string>
     <string name="product_price">Price</string>
     <string name="product_stock">In Stock</string>
-    <string name="amount">Amount</string>
+    <string name="amount">Quantity</string>
 
     <string name="scan_barcode">Scan Barcode</string>
     <string name="search_manually">or search manually</string>
