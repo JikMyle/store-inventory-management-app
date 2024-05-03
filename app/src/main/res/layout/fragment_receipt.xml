@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="uiState"
             type="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptUiState" />

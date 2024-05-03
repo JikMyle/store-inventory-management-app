@@ -1,5 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.data
 
+import androidx.datastore.preferences.core.Preferences
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Receipt
 import com.mobile_programming.sari_sari_inventory_app.data.relation.ProductSale
@@ -53,4 +54,21 @@ interface InventoryRepository {
         dateFrom: Date,
         dateTo: Date
     ) : Flow<List<RevenueOnDate>>
+
+    // Preferences Datastore functions
+    suspend fun <T> getPreference(
+        key: Preferences.Key<T>,
+        defaultValue: T
+    ) : Flow<T>
+
+    suspend fun <T> putPreference(
+        key: Preferences.Key<T>,
+        value: T
+    )
+
+    suspend fun <T> removePreference(
+        key: Preferences.Key<T>
+    )
+
+    suspend fun <T> clearAllPreference()
 }

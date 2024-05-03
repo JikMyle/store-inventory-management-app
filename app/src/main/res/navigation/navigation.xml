@@ -6,7 +6,7 @@
     <fragment
         android:id="@+id/receiptFragment"
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.receipt.ReceiptFragment"
-        android:label="receiptFragment">
+        android:label="@string/receipt">
         <action
             android:id="@+id/receiptToReceiptScanner"
             app:destination="@id/receiptScannerFragment" />
@@ -35,7 +35,7 @@
     <fragment
         android:id="@+id/productEntryFragment"
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.product.ProductEntryFragment"
-        android:label="ProductEntryFragment" >
+        android:label="@string/new_product">
         <argument
             android:name="productNumber"
             app:argType="string" />
@@ -43,10 +43,10 @@
     <fragment
         android:id="@+id/inventoryFragment"
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.inventory.InventoryFragment"
-        android:label="InventoryFragment" >
+        android:label="@string/inventory">
         <action
             android:id="@+id/inventoryToProductDetails"
-            app:destination="@id/productDetailsFragment"/>
+            app:destination="@id/productDetailsFragment" />
         <action
             android:id="@+id/inventoryToStockUpScanner"
             app:destination="@id/stockUpScannerScreenFragment" />
@@ -59,11 +59,14 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/inventoryToSettings"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetailsFragment"
-        android:label="ProductDetailsFragment" >
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.product.ProductDetailsFragment">
         <argument
             android:name="productId"
             app:argType="long" />
@@ -71,15 +74,35 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.mobile_programming.sari_sari_inventory_app.ui.home.HomeFragment"
-        android:label="HomeFragment" >
+        android:label="@string/home">
         <action
             android:id="@+id/homeToInventory"
-            app:destination="@id/inventoryFragment"/>
+            app:destination="@id/inventoryFragment" />
         <action
             android:id="@+id/homeToReceipt"
-            app:destination="@id/receiptFragment"/>
+            app:destination="@id/receiptFragment" />
         <action
             android:id="@+id/homeToProductDetails"
             app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/homeToSettings"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.mobile_programming.sari_sari_inventory_app.ui.settings.SettingsFragment"
+        android:label="@string/settings">
+        <action
+            android:id="@+id/settingsToReceipt"
+            app:destination="@id/receiptFragment"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/settingsToInventory"
+            app:destination="@id/inventoryFragment"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/settingsToHome"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
 </navigation>

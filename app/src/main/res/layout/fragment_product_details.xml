@@ -26,7 +26,8 @@
                 android:fitsSystemWindows="true"
                 android:minHeight="?attr/actionBarSize"
                 app:menu="@menu/product_details_top_app_bar_menu"
-                app:navigationIcon="@{viewModel.uiState.editing ? @drawable/baseline_clear_24 : @drawable/baseline_arrow_back_24}" />
+                app:navigationIcon="@{viewModel.uiState.editing ? @drawable/baseline_clear_24 : @drawable/baseline_arrow_back_24}"
+                app:navigationIconTint="?attr/colorOnSurface" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -44,15 +45,15 @@
                     android:id="@+id/product_image"
                     android:layout_width="@dimen/entry_image_size"
                     android:layout_height="@dimen/entry_image_size"
-                    android:contentDescription="@string/new_product_image_content_desc"
                     android:background="@drawable/dashed_line_border"
                     android:backgroundTint="?attr/colorOutline"
+                    android:contentDescription="@string/new_product_image_content_desc"
                     android:scaleType="centerCrop"
-                    app:contentPadding="@dimen/padding_extra_large"
                     android:src="@drawable/baseline_camera_alt_24"
+                    app:contentPadding="@dimen/padding_extra_large"
                     app:layout_constraintStart_toStartOf="@id/product_number_field"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"/>
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large" />
 
                 <Button
                     android:id="@+id/add_photo_button"

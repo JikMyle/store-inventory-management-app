@@ -121,4 +121,7 @@
 
     <string name="sort_by_sold">By Number Sold</string>
     <string name="sort_by_profit">By Profit Earned</string>
+
+    <string name="appearance">Appearance</string>
+    <string name="enable_dark_mode_description">Enable dark theme</string>
 </resources>

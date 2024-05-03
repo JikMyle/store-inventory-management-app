@@ -116,4 +116,7 @@ dependencies {
 
     // ML Kit Barcode Scanner API
     implementation(libs.play.services.mlkit.barcode.scanning)
+
+    // Preference Datastore
+    implementation(libs.androidx.datastore.preferences)
 }

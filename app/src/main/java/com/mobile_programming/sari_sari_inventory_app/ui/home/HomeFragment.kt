@@ -124,19 +124,22 @@ class HomeFragment : Fragment() {
 
     private fun onNavItemClick(navItem: MenuItem): Boolean {
         return when (navItem.itemId) {
-            R.id.navigate_home -> return true
+            R.id.homeFragment -> return true
 
-            R.id.navigate_inventory -> {
+            R.id.inventoryFragment -> {
                 navController.navigate(HomeFragmentDirections.homeToInventory())
                 false
             }
 
-            R.id.navigate_receipt -> {
+            R.id.receiptFragment -> {
                 navController.navigate(HomeFragmentDirections.homeToReceipt())
                 false
             }
 
-            R.id.navigate_settings -> false
+            R.id.settingsFragment -> {
+                navController.navigate(HomeFragmentDirections.homeToSettings())
+                false
+            }
 
             else -> false
         }

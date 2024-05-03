@@ -91,7 +91,7 @@ class InventoryFragment : Fragment() {
                 navController.popBackStack()
             }
 
-            botNavBar.selectedItemId = R.id.navigate_inventory
+            botNavBar.selectedItemId = R.id.inventoryFragment
             botNavBar.setOnItemSelectedListener { onNavItemClick(it) }
 
             sortMenuButton.setOnClickListener { hostView: View ->
@@ -139,7 +139,6 @@ class InventoryFragment : Fragment() {
 
         binding.apply {
             botNavBar.setOnItemSelectedListener(null)
-            topAppToolbar.setNavigationOnClickListener(null)
             inventoryRecyclerView.adapter = null
             sortMenuButton.setOnClickListener(null)
             addProductFAB.setOnClickListener(null)
@@ -155,19 +154,22 @@ class InventoryFragment : Fragment() {
 
     private fun onNavItemClick(navItem: MenuItem) : Boolean {
         return when(navItem.itemId) {
-            R.id.navigate_home -> {
+            R.id.homeFragment -> {
                 navController.navigate(InventoryFragmentDirections.inventoryToHome())
                 false
             }
 
-            R.id.navigate_inventory -> true
+            R.id.inventoryFragment -> true
 
-            R.id.navigate_receipt -> {
+            R.id.receiptFragment -> {
                 navController.navigate(InventoryFragmentDirections.inventoryToReceipt())
                 false
             }
 
-            R.id.navigate_settings -> false
+            R.id.settingsFragment -> {
+                navController.navigate(InventoryFragmentDirections.inventoryToSettings())
+                false
+            }
 
             else -> false
         }

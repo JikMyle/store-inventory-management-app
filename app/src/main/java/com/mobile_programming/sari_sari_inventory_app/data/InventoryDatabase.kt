@@ -36,7 +36,7 @@ abstract class InventoryDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context, InventoryDatabase::class.java, "inventoryDatabase"
                 )
-                    .createFromAsset("database/inventoryDatabase.db")
+//                    .createFromAsset("database/inventoryDatabase.db")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }

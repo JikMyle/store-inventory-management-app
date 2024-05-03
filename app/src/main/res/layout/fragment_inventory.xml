@@ -106,6 +106,8 @@
             android:id="@+id/bot_app_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/app_bar_height_large"
+            app:contentInsetStart="0dp"
+            app:contentInsetEnd="0dp"
             android:layout_gravity="bottom"
             app:fabAlignmentMode="end"
             app:fabAnimationMode="slide"

@@ -197,7 +197,7 @@ fun BarcodeScannerPreviewView(
         Text(
             text = stringResource(R.string.scan_barcode),
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = composeColor.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.Center)
