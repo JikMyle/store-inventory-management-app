@@ -321,21 +321,22 @@ class ReceiptTableTest {
 
         val expectedResult = listOf(
             ProductSale(
-                productId = products[0].id,
+                product = products[0],
                 amountSold = 7,
                 totalRevenue = products[0].price * 7
             ),
             ProductSale(
-                productId = products[3].id,
+                product = products[3],
                 amountSold = 2,
                 totalRevenue = products[3].price * 2
             ),
             ProductSale(
-                productId = products[5].id,
+                product = products[5],
                 amountSold = 6,
                 totalRevenue = products[5].price * 6
             )
         )
+
         val queryResult = productDao.getSalesFromDates(
             id = null,
             dateFrom = Calendar.getInstance().apply { add(Calendar.DATE, -30) }.time,

@@ -156,7 +156,7 @@ data class ProductDetails(
 fun ProductDetails.toProduct(): Product {
     return Product(
         id = id.toLongOrNull() ?: 0,
-        productNumber = productNumber,
+        productNumber = productNumber.ifBlank { null },
         productName = productName,
         price = price.toDoubleOrNull() ?: 0.0,
         stock = stock.toIntOrNull() ?: 0,

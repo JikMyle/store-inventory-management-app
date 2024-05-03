@@ -1,4 +1,4 @@
-package com.mobile_programming.sari_sari_inventory_app.ui.product
+package com.mobile_programming.sari_sari_inventory_app.ui.inventory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +22,7 @@ class InventoryViewModel(
         InventoryUiState(
             searchBarState = SearchBarState(
                 onQueryChange = ::updateQuery,
+                onSearch = ::updateProductList
             )
         )
     )
@@ -35,7 +36,7 @@ class InventoryViewModel(
                 .collect { productList ->
                     _uiState.update { oldState ->
                         oldState.copy(
-                            productList = sortProductList(productList)
+                            productList = sortProductList(productList = productList)
                         )
                     }
                 }
@@ -52,8 +53,6 @@ class InventoryViewModel(
                 searchBarState = newSearchBarState
             )
         }
-
-        updateProductList(query)
     }
 
     private fun updateProductList(query: String) {
@@ -62,7 +61,7 @@ class InventoryViewModel(
                 if (query.isEmpty()) getAllProducts()
                 else getProducts(query)
 
-            val sortedList = sortProductList(productList)
+            val sortedList = sortProductList(productList = productList)
 
             _uiState.update {
                 it.copy(
@@ -89,21 +88,29 @@ class InventoryViewModel(
     }
 
     fun changeSortingType(sortingType: SortingType, ascending: Boolean) {
+        val sortAscending =
+            if (sortingType == _uiState.value.sortingType) ascending
+            else true
+
         _uiState.update {
             it.copy(
                 sortingType = sortingType,
-                isSortAscending = ascending
+                isSortAscending = sortAscending
             )
         }
 
         updateProductList(_uiState.value.searchBarState.searchQuery)
     }
 
-    private fun sortProductList(productList: List<Product>): List<Product> {
-        return if (_uiState.value.isSortAscending) {
+    private fun sortProductList(
+        sortingType: SortingType = _uiState.value.sortingType,
+        ascending: Boolean = _uiState.value.isSortAscending,
+        productList: List<Product>
+    ): List<Product> {
+        return if (ascending) {
             productList.sortedWith(
                 compareBy {
-                    when (_uiState.value.sortingType) {
+                    when (sortingType) {
                         SortingType.ByProductNumber -> it.productNumber
                         SortingType.ByPrice -> it.price
                         SortingType.ByStock -> it.stock
@@ -114,7 +121,7 @@ class InventoryViewModel(
         } else {
             productList.sortedWith(
                 compareByDescending {
-                    when (_uiState.value.sortingType) {
+                    when (sortingType) {
                         SortingType.ByProductNumber -> it.productNumber
                         SortingType.ByPrice -> it.price
                         SortingType.ByStock -> it.stock

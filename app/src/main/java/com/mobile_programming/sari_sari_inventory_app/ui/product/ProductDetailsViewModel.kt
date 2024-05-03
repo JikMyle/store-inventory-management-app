@@ -50,29 +50,26 @@ class ProductDetailsViewModel(
         checkIfProductNumberExists(productDetails.productNumber)
 
         errorMap[ProductEntryViewModel.PRODUCT_NAME_ERROR_KEY] =
-            if (productDetails.productName.isEmpty()) {
-                TextInputErrorType.FieldRequired
-            } else {
-                null
-            }
+            checkIfFieldBlank(productDetails.productName)
+
         errorMap[ProductEntryViewModel.PRODUCT_PRICE_ERROR_KEY] =
-            if (productDetails.price.isEmpty()) {
-                TextInputErrorType.FieldRequired
-            } else {
-                null
-            }
+            checkIfFieldBlank(productDetails.price)
 
         errorMap[ProductEntryViewModel.PRODUCT_STOCK_ERROR_KEY] =
-            if (productDetails.stock.isEmpty()) {
-                TextInputErrorType.FieldRequired
-            } else {
-                null
-            }
+            checkIfFieldBlank(productDetails.stock)
 
         return errorMap
     }
 
-    // Check is the product number already exists and displays error
+    private fun checkIfFieldBlank(value: String): TextInputErrorType? {
+        return if (value.isBlank()) {
+            TextInputErrorType.FieldRequired
+        } else {
+            null
+        }
+    }
+
+    // Check if the product number already exists and displays error
     // If the product number is empty or if it is unchanged then no error is displayed
     private fun checkIfProductNumberExists(productNumber: String) {
         if (

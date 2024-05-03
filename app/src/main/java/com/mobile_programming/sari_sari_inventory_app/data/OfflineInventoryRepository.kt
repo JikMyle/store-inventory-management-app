@@ -1,5 +1,6 @@
 package com.mobile_programming.sari_sari_inventory_app.data
 
+import androidx.datastore.preferences.core.Preferences
 import com.mobile_programming.sari_sari_inventory_app.data.dao.ProductDao
 import com.mobile_programming.sari_sari_inventory_app.data.dao.ReceiptDao
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
@@ -11,9 +12,10 @@ import java.util.Date
 
 class OfflineInventoryRepository(
     private val productDao: ProductDao,
-    private val receiptDao: ReceiptDao
+    private val receiptDao: ReceiptDao,
+    private val preferencesDatastore: UserPreferencesDataStoreApi,
 ) : InventoryRepository {
-    override suspend fun insertProduct(product: Product) : Long {
+    override suspend fun insertProduct(product: Product): Long {
         return productDao.insertProduct(product)
     }
 
@@ -45,7 +47,15 @@ class OfflineInventoryRepository(
         return productDao.checkIfProductNumberExists(productNumber)
     }
 
-    override suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>) : Long {
+    override fun countOutOfStock(): Flow<Int> {
+        return productDao.countOutOfStock()
+    }
+
+    override fun countLowOnStock(max: Int): Flow<Int> {
+        return productDao.countLowOnStock(max)
+    }
+
+    override suspend fun insertReceipt(receipt: Receipt, products: Map<Product, Int>): Long {
         val id = receiptDao.insertReceipt(receipt)
 
         products.forEach {
@@ -75,7 +85,7 @@ class OfflineInventoryRepository(
     // Is it better to return a map of <Object(Product), Int> or <Long(ProductId), Int)>?
     // May have problems and break
     override suspend fun getProductsInReceipt(id: Long): Map<Long, Int> {
-        return receiptDao.getListOfProducts(id).associateBy (
+        return receiptDao.getListOfProducts(id).associateBy(
             { it.productId },
             { it.amount }
         )
@@ -98,6 +108,30 @@ class OfflineInventoryRepository(
         dateTo: Date
     ): Flow<List<RevenueOnDate>> {
         return receiptDao.getRevenueFromDates(dateFrom, dateTo)
+    }
+
+    override suspend fun <T> getPreference(
+        key: Preferences.Key<T>,
+        defaultValue: T
+    ): Flow<T> {
+        return preferencesDatastore.getPreference(key, defaultValue)
+    }
+
+    override suspend fun <T> putPreference(
+        key: Preferences.Key<T>,
+        value: T
+    ) {
+        preferencesDatastore.putPreference(key, value)
+    }
+
+    override suspend fun <T> removePreference(
+        key: Preferences.Key<T>
+    ) {
+        preferencesDatastore.removePreference(key)
+    }
+
+    override suspend fun <T> clearAllPreference() {
+        preferencesDatastore.clearAllPreference<T>()
     }
 
 }

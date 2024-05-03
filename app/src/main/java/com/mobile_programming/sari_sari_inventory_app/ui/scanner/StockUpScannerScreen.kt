@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile_programming.sari_sari_inventory_app.R
@@ -58,26 +60,45 @@ import kotlinx.coroutines.launch
 fun StockUpScannerScreen(
     modifier: Modifier = Modifier,
     viewModel: StockUpScannerViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    canNavigateBack: Boolean,
+    onNavigateUp: () -> Unit,
     navigateToProductEntry: (String) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
-    StockUpScannerBody(
-        uiState = uiState,
-        onResultClick = {
-            viewModel.updateProductWithAmount(
-                productDetails = it.toProductDetails()
-            )
-            viewModel.toggleBottomSheet(true)
-            viewModel.toggleSearchBar(false)
-        },
-        onDialogDismiss = viewModel::clearBarcodeScanned,
-        navigateToProductEntry = {
-            navigateToProductEntry(it)
-            viewModel.clearBarcodeScanned()
-        },
+    Box(
         modifier = modifier
-    )
+    ) {
+        StockUpScannerBody(
+            uiState = uiState,
+            onResultClick = {
+                viewModel.updateProductWithAmount(
+                    productDetails = it.toProductDetails()
+                )
+                viewModel.toggleBottomSheet(true)
+                viewModel.toggleSearchBar(false)
+            },
+            onDialogDismiss = viewModel::clearBarcodeScanned,
+            navigateToProductEntry = {
+                navigateToProductEntry(it)
+                viewModel.clearBarcodeScanned()
+            },
+        )
+
+        if (!uiState.value.searchBarState.isActive) {
+            BarcodeScannerTopAppBar(
+                scannerCameraState = uiState.value.scannerCameraState,
+                canNavigateBack = canNavigateBack,
+                onNavigateUp = onNavigateUp,
+                navigateToProductEntry = {
+                    navigateToProductEntry("")
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(10f)
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,7 +128,7 @@ fun StockUpScannerBody(
                 Text(
                     text = stringResource(R.string.search_manually),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = Color.White,
                 )
             }
 

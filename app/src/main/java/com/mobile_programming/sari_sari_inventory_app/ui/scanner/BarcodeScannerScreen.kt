@@ -2,7 +2,6 @@ package com.mobile_programming.sari_sari_inventory_app.ui.scanner
 
 import android.Manifest
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Color
 import android.util.Size
@@ -31,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -42,6 +42,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -58,13 +61,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.mobile_programming.sari_sari_inventory_app.R
 import com.mobile_programming.sari_sari_inventory_app.data.entity.Product
-import com.mobile_programming.sari_sari_inventory_app.ui.LockScreenOrientation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import androidx.compose.ui.graphics.Color as composeColor
@@ -87,29 +90,25 @@ fun BarcodeScanner(
         )
     }
 
-    LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-
-
     if (scannerCameraState.hasCameraAccess) {
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(
+            modifier = modifier.fillMaxSize()
+        ) {
             BarcodeScannerPreviewView(
                 isCameraFacingBack = scannerCameraState.isCameraFacingBack,
                 onBarcodeScanned = scannerCameraState.onBarcodeScanned
             )
-
-            IconButton(
-                onClick = scannerCameraState.switchCamera,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(dimensionResource(R.dimen.content_padding))
-            ) {
-
-                Icon(
-                    painter = painterResource(R.drawable.round_flip_camera_android_24),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = null
-                )
-            }
+        }
+    } else {
+        Box(
+            modifier = modifier.fillMaxSize()
+        ) {
+            Text(
+                text = stringResource(id = R.string.scanner_no_camera_access),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
@@ -198,7 +197,7 @@ fun BarcodeScannerPreviewView(
         Text(
             text = stringResource(R.string.scan_barcode),
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = composeColor.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.Center)
@@ -248,11 +247,12 @@ fun BarcodeScannerSearchBar(
             onResultClick = onResultClick,
         )
 
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                dimensionResource(R.dimen.padding_small)
-            )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    dimensionResource(R.dimen.padding_small)
+                )
         )
 
         OutlinedButton(
@@ -328,6 +328,103 @@ fun BarcodeSearchResultsItem(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BarcodeScannerTopAppBar(
+    modifier: Modifier = Modifier,
+    scannerCameraState: ScannerCameraState,
+    canNavigateBack: Boolean,
+    onNavigateUp: () -> Unit,
+    navigateToProductEntry: () -> Unit
+) {
+    TopAppBar(
+        title = { },
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(
+                    onClick = onNavigateUp
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = stringResource(
+                            id = R.string.top_app_bar_navigate_up_content_desc
+                        )
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = navigateToProductEntry
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(
+                        R.string.add_new_product
+                    )
+                )
+            }
+
+            if (scannerCameraState.hasCameraAccess) {
+                IconButton(
+                    onClick = scannerCameraState.switchCamera
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.round_flip_camera_android_24
+                        ),
+                        contentDescription = stringResource(
+                            id = R.string.flip_camera_content_description
+                        )
+                    )
+                }
+            }
+        },
+        colors = if (scannerCameraState.hasCameraAccess) {
+            transparentTopAppBarColors()
+        } else {
+            transparentTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                scrolledContainerColor = MaterialTheme.colorScheme.surface
+            )
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun transparentTopAppBarColors(
+    containerColor: composeColor = composeColor.Transparent,
+    scrolledContainerColor: composeColor = composeColor.Transparent,
+    navigationIconContentColor: composeColor? = null,
+    titleContentColor: composeColor? = null,
+    actionIconContentColor: composeColor? = null
+): TopAppBarColors {
+    return TopAppBarDefaults.topAppBarColors(
+        containerColor = containerColor,
+        scrolledContainerColor = scrolledContainerColor,
+        navigationIconContentColor = navigationIconContentColor
+            ?: if (containerColor == composeColor.Transparent) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+        titleContentColor = titleContentColor
+            ?: if (containerColor == composeColor.Transparent) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+        actionIconContentColor = actionIconContentColor
+            ?: if (containerColor == composeColor.Transparent) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+    )
 }
 
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
