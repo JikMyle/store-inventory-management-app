@@ -13,3 +13,8 @@ This app features:
 - Product Inventory and editable product details
 - Receipt/Sale assistant
 - Barcode scanner
+
+# Team
+- Jim Kyle Lauderes
+- Andrei Lebadesus
+- Trixie Yvonne Rada
